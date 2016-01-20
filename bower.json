@@ -1,0 +1,29 @@
+{
+  "name": "react-dim-sum",
+  "version": "0.0.0",
+  "description": "Dim Sum",
+  "main": "dist/react-dim-sum.min.js",
+  "homepage": "https://github.com/johngeorgewright/react-dim-sum",
+  "authors": [
+    "John Wright"
+  ],
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "react",
+    "react-component"
+  ],
+  "license": "MIT",
+  "ignore": [
+    ".editorconfig",
+    ".gitignore",
+    "package.json",
+    "src",
+    "node_modules",
+    "example",
+    "test"
+  ]
+}
