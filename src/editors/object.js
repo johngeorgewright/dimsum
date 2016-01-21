@@ -1,20 +1,24 @@
 import React, {Component, PropTypes} from 'react';
 import EditorFactory from '../EditorFactory';
+import Editor from './editor';
+import {assoc} from 'ramda';
 
-export default class ObjectEditor extends Component {
+export default class ObjectEditor extends Editor {
   get editors() {
-    let {properties} = this.props;
+    let {properties, value} = this.props;
     return Object.keys(properties).map((name, key) => (
       <EditorFactory
         key={key}
         name={name}
+        onChange={val => this.onChange(name, val)}
+        value={value && value[name]}
         {...properties[name]}
       />
     ));
   }
 
-  get title() {
-    return this.props.title || this.props.name;
+  onChange(name, value) {
+    this.props.onChange(assoc(name, value, this.props.value));
   }
 
   render() {
@@ -30,7 +34,10 @@ export default class ObjectEditor extends Component {
 }
 
 ObjectEditor.propTypes = {
-  name: PropTypes.string.isRequired,
   properties: PropTypes.object.isRequired,
-  title: PropTypes.string
+  value: PropTypes.object
+};
+
+ObjectEditor.defaultProps = {
+  value: {}
 };

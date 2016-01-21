@@ -1,17 +1,7 @@
 import React, {Component, PropTypes} from 'react';
-import StringEditor from './editors/string';
-import ObjectEditor from './editors/object';
+import * as editors from './editors';
 
 export default class EditorFactory extends Component {
-  get editor() {
-    switch (this.props.type) {
-    case 'string':
-      return StringEditor;
-    case 'object':
-      return ObjectEditor;
-    }
-  }
-
   get editorProps() {
     let props = Object.assign({}, this.props);
     delete props.type;
@@ -19,7 +9,7 @@ export default class EditorFactory extends Component {
   }
 
   render() {
-    let Editor = this.editor;
+    let Editor = editors[this.props.type];
     return Editor
       ? <Editor {...this.editorProps}/>
       : <div/>;

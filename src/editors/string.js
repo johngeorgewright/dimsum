@@ -1,6 +1,7 @@
-import React, {Component, PropTypes} from 'react';
+import React, {PropTypes} from 'react';
+import Editor from './editor';
 
-export default class StringEditor extends Component {
+export default class StringEditor extends Editor {
   get label() {
     return (
       <label htmlFor={this.props.name}>
@@ -21,10 +22,6 @@ export default class StringEditor extends Component {
     );
   }
 
-  get title() {
-    return this.props.title || this.props.name;
-  }
-
   render() {
     return (
       <div>
@@ -36,8 +33,9 @@ export default class StringEditor extends Component {
 }
 
 StringEditor.propTypes = {
-  name: PropTypes.string.isRequired,
-  onChange: PropTypes.func,
-  title: PropTypes.string,
   value: PropTypes.string
+};
+
+StringEditor.defaultProps = {
+  value: ''
 };
