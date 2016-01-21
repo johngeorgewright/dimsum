@@ -12,30 +12,30 @@ var initGulpTasks = require('react-component-gulp-tasks');
 
 var taskConfig = {
 
-	component: {
-		name: 'DimSum',
-		dependencies: [
-			'classnames',
-			'react',
-			'react-dom'
-		],
-		lib: 'lib'
-	},
+  component: {
+    name: 'DimSum',
+    dependencies: [
+      'classnames',
+      'react',
+      'react-dom'
+    ],
+    lib: 'lib'
+  },
 
-	example: {
-		src: 'example/src',
-		dist: 'example/dist',
-		files: [
-			'index.html',
-			'.gitignore'
-		],
-		scripts: [
-			'example.js'
-		],
-		less: [
-			'example.less'
-		]
-	}
+  example: {
+    src: 'example/src',
+    dist: 'example/dist',
+    files: [
+      'index.html',
+      '.gitignore'
+    ],
+    scripts: [
+      'example.js'
+    ],
+    less: [
+      'example.less'
+    ]
+  }
 
 };
 
