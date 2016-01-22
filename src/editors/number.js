@@ -3,11 +3,12 @@ import Editor from '../Editor';
 import {path, pipe} from 'ramda';
 
 let getEventValue = path(['target', 'value']);
+let toInt = val => +val;
 
 export default class NumberEditor extends Editor {
   get input() {
     let {props} = this;
-    let onChange = pipe(getEventValue, props.onChange);
+    let onChange = pipe(getEventValue, toInt, props.onChange);
     return (
       <input
         id={props.name}

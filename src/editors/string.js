@@ -33,7 +33,3 @@ export default class StringEditor extends Editor {
 StringEditor.propTypes = {
   value: PropTypes.string
 };
-
-StringEditor.defaultProps = {
-  value: ''
-};
