@@ -1,27 +1,47 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
 import DimSum from 'react-dim-sum';
-import {set, lensProp} from 'ramda';
+import {lensProp, set} from 'ramda';
 
 let schema = {
   name: 'test',
   title: 'Test',
   type: 'object',
+  required: ['prop1'],
   properties: {
     prop1: {
-      type: 'string'
+      type: 'number'
     },
     prop2: {
-      type: 'string'
+      type: 'boolean'
     },
     prop3: {
       type: 'array',
       items: {
         type: 'string'
       }
+    },
+    prop4: {
+      type: 'array',
+      title: 'People',
+      items: {
+        type: 'object',
+        properties: {
+          name: {
+            type: 'string'
+          },
+          age: {
+            type: 'number'
+          }
+        }
+      }
     }
   }
 };
+
+let replaceSchema = set(lensProp('schema'));
+let replaceValue = set(lensProp('value'));
+let stringify = json => JSON.stringify(json, null, '  ');
 
 class Example extends Component {
   constructor(...args) {
@@ -30,39 +50,41 @@ class Example extends Component {
       schema,
       value: {}
     };
-    this.schemaLens = lensProp('schema');
-    this.valueLens = lensProp('value');
+  }
+
+  setSchema(schema) {
+    this.setState(replaceSchema(schema, this.state));
+  }
+
+  setValue(value) {
+    this.setState(replaceValue(value, this.state));
   }
 
   onSchemaChange(event) {
     try {
       let schema = JSON.parse(event.target.value);
-      this.setState(set(this.schemaLens, schema, this.state));
+      this.setSchema(schema);
     } catch (e) {
     }
-  }
-
-  onValueChange(value) {
-    this.setState(set(this.valueLens, value, this.state));
   }
 
   render() {
     return (
       <div>
         <textarea
+          defaultValue={stringify(this.state.schema)}
           onChange={this.onSchemaChange.bind(this)}
           rows="10"
           style={{width: '100%'}}
-          defaultValue={JSON.stringify(this.state.schema, null, '  ')}
         >
         </textarea>
         <DimSum
-          onChange={this.onValueChange.bind(this)}
+          onChange={this.setValue.bind(this)}
           value={this.state.value}
           {...this.state.schema}
         />
         <pre>
-          {JSON.stringify(this.state.value, null, '  ')}
+          {stringify(this.state.value)}
         </pre>
       </div>
     );

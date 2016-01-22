@@ -1,7 +1,9 @@
 import React, {PropTypes} from 'react';
 import EditorFactory from '../EditorFactory';
-import Editor from './editor';
-import {append, adjust, inc, remove} from 'ramda';
+import Editor from '../Editor';
+import {__, append, inc, pipe, remove, toString, update} from 'ramda';
+
+let editorName = pipe(inc, toString);
 
 export default class ArrayEditor extends Editor {
   get editors() {
@@ -11,6 +13,25 @@ export default class ArrayEditor extends Editor {
         {this.removeButton(key)}
       </div>
     ));
+  }
+
+  get label() {
+    return (
+      <legend>
+        {this.title}
+      </legend>
+    );
+  }
+
+  get addButton() {
+    return (
+      <button
+        onClick={() => this.addEditor()}
+        type="button"
+      >
+        {`Add ${this.title}`}
+      </button>
+    );
   }
 
   removeButton(key) {
@@ -26,35 +47,20 @@ export default class ArrayEditor extends Editor {
 
   editor(key, val) {
     let {props} = this;
+    let updateValue = update(key, __, props.value);
+    let onChange = pipe(updateValue, props.onChange);
     return (
       <EditorFactory
-        name={'' + inc(key)}
-        onChange={val => this.onChange(key, val)}
+        name={editorName(key)}
+        onChange={onChange}
         value={val}
         {...props.items}
       />
     );
   }
 
-  onChange(key, value) {
-    this.props.onChange(adjust(() => value, key, this.props.value));
-  }
-
-  defaultValueForEditor() {
-    switch (this.props.items.type) {
-    case 'string':
-      return '';
-    case 'object':
-      return {};
-    case 'array':
-      return [];
-    case 'number':
-      return 0;
-    }
-  }
-
   addEditor() {
-    this.props.onChange(append(this.defaultValueForEditor(), this.props.value));
+    this.props.onChange(append(undefined, this.props.value));
   }
 
   removeEditor(key) {
@@ -62,18 +68,12 @@ export default class ArrayEditor extends Editor {
   }
 
   render() {
+    let {props} = this.props;
     return (
       <fieldset>
-        <legend>
-          {this.title}
-        </legend>
+        {this.label}
         {this.editors}
-        <button
-          onClick={() => this.addEditor()}
-          type="button"
-        >
-          {`Add ${this.title}`}
-        </button>
+        {this.addButton}
       </fieldset>
     );
   }

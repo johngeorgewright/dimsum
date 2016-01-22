@@ -1,32 +1,38 @@
 import React, {Component, PropTypes} from 'react';
 import EditorFactory from '../EditorFactory';
-import Editor from './editor';
-import {assoc} from 'ramda';
+import Editor from '../Editor';
+import {__, assoc, keys, partial, pipe} from 'ramda';
 
 export default class ObjectEditor extends Editor {
   get editors() {
-    let {properties, value} = this.props;
-    return Object.keys(properties).map((name, key) => (
+    let {props} = this;
+    let {properties, value} = props;
+    let updateValue = assoc(__, __, props.value);
+    let onChange = pipe(updateValue, props.onChange);
+    return keys(properties).map((name, key) => (
       <EditorFactory
         key={key}
+        onChange={partial(onChange, [name])}
         name={name}
-        onChange={val => this.onChange(name, val)}
+        required={props.required.indexOf(name) !== -1}
         value={value && value[name]}
         {...properties[name]}
       />
     ));
   }
 
-  onChange(name, value) {
-    this.props.onChange(assoc(name, value, this.props.value));
+  get label() {
+    return (
+      <legend>
+        {this.title}
+      </legend>
+    );
   }
 
   render() {
     return (
       <fieldset>
-        <legend>
-          {this.title}
-        </legend>
+        {this.label}
         {this.editors}
       </fieldset>
     );
@@ -35,9 +41,11 @@ export default class ObjectEditor extends Editor {
 
 ObjectEditor.propTypes = {
   properties: PropTypes.object.isRequired,
+  required: PropTypes.array,
   value: PropTypes.object
 };
 
 ObjectEditor.defaultProps = {
+  required: [],
   value: {}
 };

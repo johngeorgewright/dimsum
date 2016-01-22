@@ -1,22 +1,20 @@
 import React, {PropTypes} from 'react';
 import Editor from '../Editor';
 
-export default class StringEditor extends Editor {
+export default class BooleanEditor extends Editor {
   get input() {
     return (
       <input
         id={this.props.name}
         name={this.props.name}
         onChange={this.onChange.bind(this)}
-        required={this.props.required}
-        type="text"
-        value={this.props.value}
+        type="checkbox"
       />
     );
   }
 
   onChange(event) {
-    this.props.onChange(event.target.value);
+    this.props.onChange(event.target.checked);
   }
 
   render() {
@@ -29,10 +27,6 @@ export default class StringEditor extends Editor {
   }
 }
 
-StringEditor.propTypes = {
-  value: PropTypes.string
-};
-
-StringEditor.defaultProps = {
-  value: ''
+BooleanEditor.propTypes = {
+  value: PropTypes.bool
 };
