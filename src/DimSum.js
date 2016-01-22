@@ -5,18 +5,31 @@ import {equals} from 'ramda';
 export default class DimSum extends Component {
   constructor(props, ...args) {
     super(props, ...args);
-    this.state = props.value || {};
+    if (!props.onChange) {
+      this.state = props.value || {};
+    }
   }
 
   componentWillReceiveProps(props) {
-    this.setState(props.value || {});
+    if (!props.onChange) {
+      this.setState(props.value || {});
+    }
+  }
+
+  onChange(value) {
+    let {onChange} = this.props;
+    if (onChange) {
+      onChange(value);
+    } else {
+      this.setState(value);
+    }
   }
 
   render() {
     return (
       <EditorFactory
-        onChange={state => this.setState(state)}
-        value={this.state}
+        onChange={this.onChange.bind(this)}
+        value={this.state || this.props.value}
         {...this.props}
       />
     );
@@ -24,5 +37,6 @@ export default class DimSum extends Component {
 }
 
 DimSum.propTypes = {
+  onChange: PropTypes.func,
   value: PropTypes.object
 };
