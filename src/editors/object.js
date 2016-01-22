@@ -12,7 +12,7 @@ export default class ObjectEditor extends Editor {
     return keys(properties).map((name, key) => (
       <EditorFactory
         key={key}
-        onChange={partial(onChange, [name])}
+        onChange={val => onChange(name, val)}
         name={name}
         required={props.required.indexOf(name) !== -1}
         value={value && value[name]}
