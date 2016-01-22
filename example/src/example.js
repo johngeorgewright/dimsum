@@ -35,6 +35,10 @@ let schema = {
           }
         }
       }
+    },
+    prop5: {
+      type: 'string',
+      enum: ['one', 'two', 'three']
     }
   }
 };

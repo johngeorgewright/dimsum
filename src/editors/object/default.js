@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react';
-import EditorFactory from '../EditorFactory';
-import Editor from '../Editor';
+import EditorFactory from '../../EditorFactory';
+import Editor from '../../Editor';
 import {__, assoc, keys, partial, pipe} from 'ramda';
 
 export default class ObjectEditor extends Editor {

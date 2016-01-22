@@ -1,15 +1,21 @@
 import React, {Component, PropTypes} from 'react';
 import * as editors from './editors';
+import {omit} from 'ramda';
 
 export default class EditorFactory extends Component {
   get editorProps() {
-    let props = Object.assign({}, this.props);
-    delete props.type;
-    return props;
+    return omit(['type'], this.props);
+  }
+
+  get Editor() {
+    let Editor = editors[this.props.type]['default'];
+    return this.editorProps.enum && Editor && Editor.enumerable
+      ? editors.enumerable.default
+      : Editor;
   }
 
   render() {
-    let Editor = editors[this.props.type];
+    let Editor = this.Editor;
     return Editor
       ? <Editor {...this.editorProps}/>
       : <div/>;

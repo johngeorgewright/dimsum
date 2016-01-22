@@ -1,20 +1,22 @@
 import React, {PropTypes} from 'react';
-import Editor from '../Editor';
+import Editor from '../../Editor';
 import {path, pipe} from 'ramda';
 
 let getEventValue = path(['target', 'value']);
+let toInt = val => +val;
 
-export default class StringEditor extends Editor {
+export default class NumberEditor extends Editor {
   get input() {
     let {props} = this;
-    let onChange = pipe(getEventValue, props.onChange);
+    let {name} = props;
+    let onChange = pipe(getEventValue, toInt, props.onChange);
     return (
       <input
-        id={props.name}
-        name={props.name}
+        id={name}
+        name={name}
         onChange={onChange}
         required={props.required}
-        type="text"
+        type="number"
         value={props.value}
       />
     );
@@ -30,6 +32,8 @@ export default class StringEditor extends Editor {
   }
 }
 
-StringEditor.propTypes = {
-  value: PropTypes.string
+NumberEditor.propTypes = {
+  value: PropTypes.number
 };
+
+NumberEditor.enumerable = true;

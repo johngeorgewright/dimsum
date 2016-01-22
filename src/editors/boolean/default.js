@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import Editor from '../Editor';
+import Editor from '../../Editor';
 import {path, pipe} from 'ramda';
 
 let getEventValue = path(['target', 'checked']);
@@ -32,3 +32,4 @@ export default class BooleanEditor extends Editor {
 BooleanEditor.propTypes = {
   value: PropTypes.bool
 };
+  
