@@ -1,22 +1,23 @@
 import React, {PropTypes} from 'react';
 import Editor from '../Editor';
+import {path, pipe} from 'ramda';
+
+let getEventValue = path(['target', 'value']);
 
 export default class NumberEditor extends Editor {
   get input() {
+    let {props} = this;
+    let onChange = pipe(getEventValue, props.onChange);
     return (
       <input
-        id={this.props.name}
-        name={this.props.name}
-        onChange={this.onChange.bind(this)}
-        required={this.props.required}
+        id={props.name}
+        name={props.name}
+        onChange={onChange}
+        required={props.required}
         type="number"
-        value={this.props.value}
+        value={props.value}
       />
     );
-  }
-
-  onChange(event) {
-    this.props.onChange(+event.target.value);
   }
 
   render() {
