@@ -1,29 +1,64 @@
 import React, {PropTypes} from 'react';
 import EditorFactory from '../EditorFactory';
 import Editor from './editor';
-import {append} from 'ramda';
+import {append, adjust, inc, remove} from 'ramda';
 
 export default class ArrayEditor extends Editor {
   get editors() {
+    return this.props.value.map((val, key) => (
+      <div key={key}>
+        {this.editor(key, val)}
+        {this.removeButton(key)}
+      </div>
+    ));
+  }
+
+  removeButton(key) {
+    return (
+      <button
+        onClick={() => this.removeEditor(key)}
+        type="button"
+      >
+        {'Remove'}
+      </button>
+    );
+  }
+
+  editor(key, val) {
     let {props} = this;
-    console.log(props);
-    return props.value.map((val, key) => (
+    return (
       <EditorFactory
-        key={key}
-        name={`${props.name}[${key}]`}
+        name={'' + inc(key)}
         onChange={val => this.onChange(key, val)}
         value={val}
         {...props.items}
       />
-    ));
+    );
   }
 
   onChange(key, value) {
-    this.props.onChange(assoc(key, value, this.props.value));
+    this.props.onChange(adjust(() => value, key, this.props.value));
+  }
+
+  defaultValueForEditor() {
+    switch (this.props.items.type) {
+    case 'string':
+      return '';
+    case 'object':
+      return {};
+    case 'array':
+      return [];
+    case 'number':
+      return 0;
+    }
   }
 
   addEditor() {
-    this.props.onChange(append('', this.props.value));
+    this.props.onChange(append(this.defaultValueForEditor(), this.props.value));
+  }
+
+  removeEditor(key) {
+    this.props.onChange(remove(key, 1, this.props.value));
   }
 
   render() {

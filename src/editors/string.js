@@ -15,11 +15,15 @@ export default class StringEditor extends Editor {
       <input
         id={this.props.name}
         name={this.props.name}
-        onChange={this.props.onChange}
+        onChange={this.onChange.bind(this)}
         type="text"
         value={this.props.value}
       />
     );
+  }
+
+  onChange(event) {
+    this.props.onChange(event.target.value);
   }
 
   render() {
