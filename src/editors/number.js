@@ -8,11 +8,12 @@ let toInt = val => +val;
 export default class NumberEditor extends Editor {
   get input() {
     let {props} = this;
+    let {name} = props;
     let onChange = pipe(getEventValue, toInt, props.onChange);
     return (
       <input
-        id={props.name}
-        name={props.name}
+        id={name}
+        name={name}
         onChange={onChange}
         required={props.required}
         type="number"

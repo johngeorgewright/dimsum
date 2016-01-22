@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import EditorFactory from '../EditorFactory';
 import Editor from '../Editor';
-import {__, append, inc, pipe, remove, toString, update} from 'ramda';
+import {__, always, append, inc, pipe, remove, toString, update} from 'ramda';
 
 let editorName = pipe(inc, toString);
 
@@ -24,9 +24,13 @@ export default class ArrayEditor extends Editor {
   }
 
   get addButton() {
+    let addEditor = pipe(
+      () => append(undefined, this.props.value),
+      this.props.onChange
+    );
     return (
       <button
-        onClick={() => this.addEditor()}
+        onClick={addEditor}
         type="button"
       >
         {`Add ${this.title}`}
@@ -35,9 +39,13 @@ export default class ArrayEditor extends Editor {
   }
 
   removeButton(key) {
+    let removeEditor = pipe(
+      () => remove(key, 1, this.props.value),
+      this.props.onChange
+    );
     return (
       <button
-        onClick={() => this.removeEditor(key)}
+        onClick={removeEditor}
         type="button"
       >
         {'Remove'}
@@ -47,28 +55,21 @@ export default class ArrayEditor extends Editor {
 
   editor(key, val) {
     let {props} = this;
-    let updateValue = update(key, __, props.value);
-    let onChange = pipe(updateValue, props.onChange);
+    let updateEditor = pipe(
+      update(key, __, props.value),
+      props.onChange
+    );
     return (
       <EditorFactory
         name={editorName(key)}
-        onChange={onChange}
+        onChange={updateEditor}
         value={val}
         {...props.items}
       />
     );
   }
 
-  addEditor() {
-    this.props.onChange(append(undefined, this.props.value));
-  }
-
-  removeEditor(key) {
-    this.props.onChange(remove(key, 1, this.props.value));
-  }
-
   render() {
-    let {props} = this.props;
     return (
       <fieldset>
         {this.label}
