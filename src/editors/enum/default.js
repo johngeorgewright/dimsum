@@ -1,18 +1,13 @@
 import React, {PropTypes} from 'react';
 import Editor from '../../Editor';
-import {path, pipe} from 'ramda';
-
-let getEventValue = path(['target', 'value']);
 
 export default class EnumEditor extends Editor {
   get input() {
-    let {props} = this;
-    let onChange = pipe(getEventValue, props.onChange);
     return (
       <select
         id={props.name}
         name={props.name}
-        onChange={onChange}
+        onChange={this.onChange.bind(this)}
       >
         {this.options}
       </select>
@@ -28,6 +23,10 @@ export default class EnumEditor extends Editor {
         {option}
       </option>
     ));
+  }
+
+  onChange(event) {
+    this.props.onChange(event.target.value);
   }
 
   render() {
