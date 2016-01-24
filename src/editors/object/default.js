@@ -4,8 +4,13 @@ import Editor from '../../Editor';
 import {assoc, keys} from 'ramda';
 
 export default class ObjectEditor extends Editor {
+  constructor(...args) {
+    super(...args);
+    this.editor = this.editor.bind(this);
+  }
+
   get editors() {
-    return keys(this.props.properties).map(this.editor.bind(this));
+    return keys(this.props.properties).map(this.editor);
   }
 
   get label() {

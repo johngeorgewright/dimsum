@@ -2,38 +2,46 @@ import React, {PropTypes} from 'react';
 import Editor from '../../Editor';
 
 export default class EnumEditor extends Editor {
+  constructor(...args) {
+    super(...args);
+    this.onChange = this.onChange.bind(this);
+    this.option = this.option.bind(this);
+  }
+
   get input() {
     let {props} = this;
     return (
       <select
         id={props.name}
         name={props.name}
-        onChange={this.onChange.bind(this)}
-        value={props.value === undefined ? props.defaultValue : props.value}
+        onChange={this.onChange}
+        value={this.value}
       >
         {this.options}
       </select>
     );
   }
 
+  get value() {
+    let {props} = this;
+    return props.value || (props.required && props.enum[0]);
+  }
+
   get options() {
     let {props} = this;
-    let options = props.required ? [] : [(
-      <option
-        key={-1}
-        value={null}
-      >
-        {''}
-      </option>
-    )];
-    return options.concat(props.enum.map((option, key) => (
+    let options = props.required ? [] : [this.option(null, -1)];
+    return options.concat(props.enum.map(this.option));
+  }
+
+  option(value, key) {
+    return (
       <option
         key={key}
-        value={option}
+        value={value}
       >
-        {option}
+        {value}
       </option>
-    )));
+    );
   }
 
   onChange(event) {

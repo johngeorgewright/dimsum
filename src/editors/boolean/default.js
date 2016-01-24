@@ -2,13 +2,18 @@ import React, {PropTypes} from 'react';
 import Editor from '../../Editor';
 
 export default class BooleanEditor extends Editor {
+  constructor(...args) {
+    super(...args);
+    this.onChange = this.onChange.bind(this);
+  }
+
   get input() {
     let {props: {name}} = this;
     return (
       <input
         id={name}
         name={name}
-        onChange={this.onChange.bind(this)}
+        onChange={this.onChange}
         type="checkbox"
       />
     );

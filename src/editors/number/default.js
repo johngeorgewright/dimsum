@@ -2,6 +2,11 @@ import React, {PropTypes} from 'react';
 import Editor from '../../Editor';
 
 export default class NumberEditor extends Editor {
+  constructor(...args) {
+    super(...args);
+    this.onChange = this.onChange.bind(this);
+  }
+
   get input() {
     let {props} = this;
     let {name} = props;
@@ -9,7 +14,7 @@ export default class NumberEditor extends Editor {
       <input
         id={name}
         name={name}
-        onChange={this.onChange.bind(this)}
+        onChange={this.onChange}
         required={props.required}
         type="number"
         value={props.value}

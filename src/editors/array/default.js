@@ -8,6 +8,11 @@ let addItem = append(undefined);
 let removeAtIndex = remove(__, 1);
 
 export default class ArrayEditor extends Editor {
+  constructor(...args) {
+    super(...args);
+    this.addEditor = this.addEditor.bind(this);
+  }
+
   get editors() {
     return this.props.value.map((val, key) => (
       <div key={key}>
@@ -28,7 +33,7 @@ export default class ArrayEditor extends Editor {
   get addButton() {
     return (
       <button
-        onClick={this.addEditor.bind(this)}
+        onClick={this.addEditor}
         type="button"
       >
         {`Add ${this.title}`}
