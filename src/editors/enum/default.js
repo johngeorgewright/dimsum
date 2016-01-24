@@ -1,51 +1,71 @@
-import React, {PropTypes} from 'react';
+import React, {PropTypes, Stylesheet} from 'react';
 import Editor from '../../Editor';
+import Select from 'react-select';
+
+let styles = {
+  wrapper: {
+    position: 'relatvie'
+  },
+  control: {
+    backgroundColor: '',
+    border: '',
+    borderColor: '',
+    borderRadius: '',
+    boxSizing: 'border-box',
+    color: '',
+    cursor: 'default',
+    display: 'table',
+    height: '',
+    outline: 'none',
+    overflow: 'hidden',
+    position: 'relative',
+    width: '100%'
+  },
+  menuContainer: {
+    borderBottomRadius: '',
+    border: '1px solid ',
+    borderTopColor: '',
+    boxSizing: 'border-box',
+    marginTop: '-1px',
+    position: 'absolute',
+    top: '100%',
+    width: '100%',
+    zIndex: '',
+    overflowScrolling: 'touch'
+  },
+  menu: {
+    maxHeight: '',
+    overflow: 'auto'
+  }
+};
 
 export default class EnumEditor extends Editor {
-  constructor(...args) {
-    super(...args);
-    this.onChange = this.onChange.bind(this);
-    this.option = this.option.bind(this);
-  }
-
   get input() {
     let {props} = this;
     return (
-      <select
+      <Select
         id={props.name}
+        multi={props.multi}
         name={props.name}
-        onChange={this.onChange}
+        onChange={props.onChange}
+        options={this.options}
         value={this.value}
       >
         {this.options}
-      </select>
+      </Select>
     );
+  }
+
+  get options() {
+    return this.props.enum.map(option => ({
+      label: option,
+      value: option
+    }));
   }
 
   get value() {
     let {props} = this;
     return props.value || (props.required && props.enum[0]);
-  }
-
-  get options() {
-    let {props} = this;
-    let options = props.required ? [] : [this.option(null, -1)];
-    return options.concat(props.enum.map(this.option));
-  }
-
-  option(value, key) {
-    return (
-      <option
-        key={key}
-        value={value}
-      >
-        {value}
-      </option>
-    );
-  }
-
-  onChange(event) {
-    this.props.onChange(event.target.value);
   }
 
   render() {
@@ -60,9 +80,11 @@ export default class EnumEditor extends Editor {
 
 EnumEditor.propTypes = {
   defaultValue: PropTypes.any,
-  enum: PropTypes.array
+  enum: PropTypes.array,
+  multi: PropTypes.bool
 };
 
 EnumEditor.defaultProps = {
-  enum: []
+  enum: [],
+  multi: false
 };
