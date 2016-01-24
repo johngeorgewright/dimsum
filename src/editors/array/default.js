@@ -26,10 +26,9 @@ export default class ArrayEditor extends Editor {
   }
 
   get addButton() {
-    let {props} = this;
     return (
       <button
-        onClick={() => props.onChange(addItem(props.value))}
+        onClick={this.addEditor.bind(this)}
         type="button"
       >
         {`Add ${this.title}`}
@@ -37,11 +36,14 @@ export default class ArrayEditor extends Editor {
     );
   }
 
+  addEditor() {
+    this.props.onChange(addItem(this.props.value));
+  }
+
   removeButton(key) {
-    let {props} = this;
     return (
       <button
-        onClick={() => props.onChange(removeAtIndex(key, props.value))}
+        onClick={this.createEditorRemover(key)}
         type="button"
       >
         {'Remove'}
@@ -49,16 +51,25 @@ export default class ArrayEditor extends Editor {
     );
   }
 
-  editor(key, val) {
+  createEditorRemover(key) {
     let {props} = this;
+    return () => props.onChange(removeAtIndex(key, props.value));
+  }
+
+  editor(key, val) {
     return (
       <EditorFactory
         name={editorName(key)}
-        onChange={val => props.onChange(update(key, val, props.value))}
+        onChange={this.createEditorUpdater(key)}
         value={val}
-        {...props.items}
+        {...this.props.items}
       />
     );
+  }
+
+  createEditorUpdater(key) {
+    let {props} = this;
+    return val => props.onChange(update(key, val, props.value));
   }
 
   render() {

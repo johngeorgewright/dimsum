@@ -1,24 +1,11 @@
 import React, {Component, PropTypes} from 'react';
 import EditorFactory from '../../EditorFactory';
 import Editor from '../../Editor';
-import {__, assoc, keys, partial, pipe} from 'ramda';
+import {assoc, keys} from 'ramda';
 
 export default class ObjectEditor extends Editor {
   get editors() {
-    let {props} = this;
-    let {properties, value} = props;
-    let updateValue = assoc(__, __, props.value);
-    let onChange = pipe(updateValue, props.onChange);
-    return keys(properties).map((name, key) => (
-      <EditorFactory
-        key={key}
-        onChange={val => onChange(name, val)}
-        name={name}
-        required={props.required.indexOf(name) !== -1}
-        value={value && value[name]}
-        {...properties[name]}
-      />
-    ));
+    return keys(this.props.properties).map(this.editor.bind(this));
   }
 
   get label() {
@@ -27,6 +14,29 @@ export default class ObjectEditor extends Editor {
         {this.title}
       </legend>
     );
+  }
+
+  get required() {
+    return this.props.required.indexOf(name) !== -1;
+  }
+
+  editor(name, key) {
+    let {props: {properties, value}} = this;
+    return (
+      <EditorFactory
+        key={key}
+        onChange={this.createUpdater(name)}
+        name={name}
+        required={this.required}
+        value={value && value[name]}
+        {...properties[name]}
+      />
+    );
+  }
+
+  createUpdater(name) {
+    let {props} = this;
+    return val => props.onChange(assoc(name, val, props.value));
   }
 
   render() {
