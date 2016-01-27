@@ -1,8 +1,5 @@
 import React, {Component, PropTypes} from 'react';
 import * as editors from './editors';
-import {lensProp, omit, pipe, set} from 'ramda';
-
-const setRequired = set(lensProp('required'));
 
 export default class EditorFactory extends Component {
   get Editor() {

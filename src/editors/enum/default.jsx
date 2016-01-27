@@ -57,7 +57,8 @@ export default class EnumEditor extends Editor {
 EnumEditor.propTypes = {
   enum: PropTypes.array,
   multi: PropTypes.bool,
-  value: PropTypes.any
+  value: (props, propName) => {
+  }
 };
 
 EnumEditor.defaultProps = {

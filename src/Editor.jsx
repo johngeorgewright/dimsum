@@ -16,7 +16,11 @@ export default class Editor extends Component {
 
 Editor.propTypes = {
   isRequired: PropTypes.bool,
-  name: PropTypes.string.isRequired,
+  name: (props, propsName, componentName) => {
+    if (!/^[a-z0-9_]+/i) {
+      return new Error('Invalid name');
+    }
+  },
   onChange: PropTypes.func.isRequired,
   title: PropTypes.string
 };
