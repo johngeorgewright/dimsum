@@ -38,7 +38,8 @@ let schema = {
     },
     prop5: {
       type: 'string',
-      enum: ['one', 'two', 'three']
+      enum: ['one', 'two', 'three'],
+      multi: true
     }
   }
 };

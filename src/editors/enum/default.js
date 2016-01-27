@@ -1,45 +1,16 @@
 import React, {PropTypes, Stylesheet} from 'react';
 import Editor from '../../Editor';
 import Select from 'react-select';
+import {prop} from 'ramda';
 
-let styles = {
-  wrapper: {
-    position: 'relatvie'
-  },
-  control: {
-    backgroundColor: '',
-    border: '',
-    borderColor: '',
-    borderRadius: '',
-    boxSizing: 'border-box',
-    color: '',
-    cursor: 'default',
-    display: 'table',
-    height: '',
-    outline: 'none',
-    overflow: 'hidden',
-    position: 'relative',
-    width: '100%'
-  },
-  menuContainer: {
-    borderBottomRadius: '',
-    border: '1px solid ',
-    borderTopColor: '',
-    boxSizing: 'border-box',
-    marginTop: '-1px',
-    position: 'absolute',
-    top: '100%',
-    width: '100%',
-    zIndex: '',
-    overflowScrolling: 'touch'
-  },
-  menu: {
-    maxHeight: '',
-    overflow: 'auto'
-  }
-};
+let getValue = prop('value');
 
 export default class EnumEditor extends Editor {
+  constructor(...args) {
+    super(...args);
+    this.onChange = this.onChange.bind(this);
+  }
+
   get input() {
     let {props} = this;
     return (
@@ -47,7 +18,7 @@ export default class EnumEditor extends Editor {
         id={props.name}
         multi={props.multi}
         name={props.name}
-        onChange={props.onChange}
+        onChange={this.onChange}
         options={this.options}
         value={this.value}
       >
@@ -66,6 +37,11 @@ export default class EnumEditor extends Editor {
   get value() {
     let {props} = this;
     return props.value || (props.required && props.enum[0]);
+  }
+
+  onChange(selected) {
+    let {props} = this;
+    props.onChange(props.multi ? selected.map(getValue) : selected.value);
   }
 
   render() {
