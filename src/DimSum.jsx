@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react';
-import EditorFactory from './EditorFactory';
+import EditorFactory from './EditorFactory.jsx';
 import {equals} from 'ramda';
 
 export default class DimSum extends Component {

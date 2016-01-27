@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import Editor from '../../Editor';
+import Editor from '../../Editor.jsx';
 
 export default class BooleanEditor extends Editor {
   constructor(...args) {

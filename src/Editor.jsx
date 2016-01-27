@@ -15,12 +15,12 @@ export default class Editor extends Component {
 }
 
 Editor.propTypes = {
+  isRequired: PropTypes.bool,
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  required: PropTypes.bool,
   title: PropTypes.string
 };
 
 Editor.defaultValues = {
-  required: false
+  isRequired: false
 };

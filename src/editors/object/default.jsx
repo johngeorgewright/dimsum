@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react';
-import EditorFactory from '../../EditorFactory';
-import Editor from '../../Editor';
+import EditorFactory from '../../EditorFactory.jsx';
+import Editor from '../../Editor.jsx';
 import {assoc, keys} from 'ramda';
 
 export default class ObjectEditor extends Editor {
@@ -21,7 +21,7 @@ export default class ObjectEditor extends Editor {
     );
   }
 
-  get required() {
+  isRequired(name) {
     return this.props.required.indexOf(name) !== -1;
   }
 
@@ -29,11 +29,11 @@ export default class ObjectEditor extends Editor {
     let {props: {properties, value}} = this;
     return (
       <EditorFactory
+        isRequired={this.isRequired(name)}
         key={key}
-        onChange={this.createUpdater(name)}
         name={name}
-        required={this.required}
-        value={value && value[name]}
+        onChange={this.createUpdater(name)}
+        value={value[name]}
         {...properties[name]}
       />
     );

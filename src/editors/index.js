@@ -1,9 +1,9 @@
-import DefaultArray from './array/default';
-import DefaultBoolean from './boolean/default';
-import DefaultEnum from './enum/default';
-import DefaultNumber from './number/default';
-import DefaultObject from './object/default';
-import DefaultString from './string/default';
+import DefaultArray from './array/default.jsx';
+import DefaultBoolean from './boolean/default.jsx';
+import DefaultEnum from './enum/default.jsx';
+import DefaultNumber from './number/default.jsx';
+import DefaultObject from './object/default.jsx';
+import DefaultString from './string/default.jsx';
 
 export let array = {
   default: DefaultArray

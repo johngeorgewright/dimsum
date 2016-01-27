@@ -1,5 +1,5 @@
 import React, {PropTypes, Stylesheet} from 'react';
-import Editor from '../../Editor';
+import Editor from '../../Editor.jsx';
 import Select from 'react-select';
 import {prop} from 'ramda';
 
@@ -36,7 +36,7 @@ export default class EnumEditor extends Editor {
 
   get value() {
     let {props} = this;
-    return props.value || (props.required && props.enum[0]);
+    return props.value || (props.isRequired && props.enum[0]);
   }
 
   onChange(selected) {
@@ -55,9 +55,9 @@ export default class EnumEditor extends Editor {
 }
 
 EnumEditor.propTypes = {
-  defaultValue: PropTypes.any,
   enum: PropTypes.array,
-  multi: PropTypes.bool
+  multi: PropTypes.bool,
+  value: PropTypes.any
 };
 
 EnumEditor.defaultProps = {
