@@ -1,25 +1,37 @@
-import React, {PropTypes} from 'react';
+import React, {PropTypes, Stylesheet} from 'react';
 import Editor from '../../Editor';
+import Select from 'react-select';
+import {prop} from 'ramda';
+
+let getValue = prop('value');
 
 export default class EnumEditor extends Editor {
   constructor(...args) {
     super(...args);
     this.onChange = this.onChange.bind(this);
-    this.option = this.option.bind(this);
   }
 
   get input() {
     let {props} = this;
     return (
-      <select
+      <Select
         id={props.name}
+        multi={props.multi}
         name={props.name}
         onChange={this.onChange}
+        options={this.options}
         value={this.value}
       >
         {this.options}
-      </select>
+      </Select>
     );
+  }
+
+  get options() {
+    return this.props.enum.map(option => ({
+      label: option,
+      value: option
+    }));
   }
 
   get value() {
@@ -27,25 +39,9 @@ export default class EnumEditor extends Editor {
     return props.value || (props.required && props.enum[0]);
   }
 
-  get options() {
+  onChange(selected) {
     let {props} = this;
-    let options = props.required ? [] : [this.option(null, -1)];
-    return options.concat(props.enum.map(this.option));
-  }
-
-  option(value, key) {
-    return (
-      <option
-        key={key}
-        value={value}
-      >
-        {value}
-      </option>
-    );
-  }
-
-  onChange(event) {
-    this.props.onChange(event.target.value);
+    props.onChange(props.multi ? selected.map(getValue) : selected.value);
   }
 
   render() {
@@ -60,9 +56,11 @@ export default class EnumEditor extends Editor {
 
 EnumEditor.propTypes = {
   defaultValue: PropTypes.any,
-  enum: PropTypes.array
+  enum: PropTypes.array,
+  multi: PropTypes.bool
 };
 
 EnumEditor.defaultProps = {
-  enum: []
+  enum: [],
+  multi: false
 };
