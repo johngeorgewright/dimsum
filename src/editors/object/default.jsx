@@ -33,7 +33,7 @@ export default class ObjectEditor extends Editor {
         key={key}
         name={name}
         onChange={this.createUpdater(name)}
-        value={value[name]}
+        value={value && value[name]}
         {...properties[name]}
       />
     );

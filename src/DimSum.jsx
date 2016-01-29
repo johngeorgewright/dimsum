@@ -8,6 +8,7 @@ export default class DimSum extends Component {
     if (!props.onChange) {
       this.state = props.value || {};
     }
+    this.onChange = this.onChange.bind(this);
   }
 
   componentWillReceiveProps(props) {
@@ -28,7 +29,7 @@ export default class DimSum extends Component {
   render() {
     return (
       <EditorFactory
-        onChange={this.onChange.bind(this)}
+        onChange={this.onChange}
         value={this.state || this.props.value}
         {...this.props}
       />
