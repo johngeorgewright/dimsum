@@ -99,7 +99,7 @@ class Example extends Component {
       : <div/>;
   }
 
-  render() {
+  get schemaEditor() {
     return (
       <div>
         <h2>Schema</h2>
@@ -109,8 +109,14 @@ class Example extends Component {
           onChange={this.onSchemaChange.bind(this)}
           value={stringify(this.state.schema)}
         />
+      </div>
+    );
+  }
+
+  get dimSumEditor() {
+    return (
+      <div>
         <h2>Example Editor</h2>
-        {this.errors}
         <DimSum
           onChange={this.setValue.bind(this)}
           onError={this.handleError.bind(this)}
@@ -121,10 +127,28 @@ class Example extends Component {
         <button onClick={this.validate.bind(this)}>
           Validate
         </button>
+      </div>
+    );
+  }
+
+  get result() {
+    return (
+      <div>
         <h2>Resulting Value</h2>
         <Highlight className="json">
           {stringify(this.state.value)}
         </Highlight>
+      </div>
+    );
+  }
+
+  render() {
+    return (
+      <div>
+        {this.schemaEditor}
+        {this.errors}
+        {this.dimSumEditor}
+        {this.result}
       </div>
     );
   }
