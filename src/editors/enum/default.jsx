@@ -41,7 +41,7 @@ export default class EnumEditor extends Editor {
 
   onChange(selected) {
     let {props} = this;
-    props.onChange(props.multi ? selected.map(getValue) : selected.value);
+    props.onChange(props.multi ? (selected || []).map(getValue) : selected.value);
   }
 
   render() {
@@ -57,7 +57,26 @@ export default class EnumEditor extends Editor {
 EnumEditor.propTypes = {
   enum: PropTypes.array,
   multi: PropTypes.bool,
-  value: (props, propName) => {
+  type: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number
+  ]).isRequired,
+  value: (props, propName, componentName) => {
+    if (typeof props[propName] === 'undefined') {
+      return;
+    }
+    let type;
+    switch (props.type) {
+    case 'string':
+      type = PropTypes.string;
+      break;
+    case 'number':
+      type = PropTypes.number;
+      break;
+    default:
+      return new Error(`Cannot use an enum of type "${type}"`);
+    }
+    return PropTypes.arrayOf(type)(props, propName, componentName);
   }
 };
 
