@@ -42,22 +42,20 @@ const schema = {
     },
     prop5: {
       type: 'string',
-      enum: ['one', 'two', 'three'],
-      multi: true
+      enum: ['one', 'two', 'three']
     }
   }
 };
 
 const replaceSchema = assoc('schema');
 const replaceValue = assoc('value');
-const replaceErrors = assoc('errors');
+const replaceError = assoc('error');
 const stringify = json => JSON.stringify(json, null, '  ');
 
 class Example extends Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      errors: [],
       schema,
       value: {}
     };
@@ -71,9 +69,9 @@ class Example extends Component {
     this.setState(replaceValue(value, this.state));
   }
 
-  onSchemaChange(event) {
+  onSchemaChange(schemaString) {
     try {
-      let schema = JSON.parse(event.target.value);
+      let schema = JSON.parse(schemaString);
       this.setSchema(schema);
     } catch (e) {
     }
@@ -83,20 +81,27 @@ class Example extends Component {
     this.refs.editor.validate();
   }
 
-  handleError(errors) {
-    this.setState(replaceErrors(errors, this.state));
+  handleError(error) {
+    this.setState(replaceError(error, this.state));
   }
 
-  get errors() {
-    return this.state.errors.length
-      ? <ul>
-          {this.state.errors.map((error, i) => (
-            <li key={i}>
-              {error.message}
-            </li>
-          ))}
-        </ul>
-      : <div/>;
+  get error() {
+    let {error} = this.state;
+    if (error) {
+      let message = 'There was an error';
+      if (error.dataPath.length) message += ` ${error.dataPath}`;
+      message += ': ';
+      return (
+        <p>
+          {message}
+          <strong>
+            {error.message}
+          </strong>
+        </p>
+      );
+    } else {
+      return <div/>;
+    }
   }
 
   get schemaEditor() {
@@ -146,7 +151,7 @@ class Example extends Component {
     return (
       <div>
         {this.schemaEditor}
-        {this.errors}
+        {this.error}
         {this.dimSumEditor}
         {this.result}
       </div>

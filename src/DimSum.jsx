@@ -1,11 +1,10 @@
 import React, {Component, PropTypes} from 'react';
 import EditorFactory from './EditorFactory.jsx';
 import {assoc, omit, merge} from 'ramda';
-import Ajv from 'ajv';
+import tv4 from 'tv4';
 
-const validator = Ajv();
 const schemaFromProps = omit(['onChange', 'value']);
-const setErrors = assoc('errors');
+const setError = assoc('error');
 
 export default class DimSum extends Component {
   constructor(props, ...args) {
@@ -26,10 +25,9 @@ export default class DimSum extends Component {
   }
 
   validate() {
-    let validate = validator.compile(this.schema);
-    let errors = !validate(this.props.value) ? validate.errors : [];
-    this.props.onError(errors);
-    this.setState(setErrors(errors, this.state));
+    let error = tv4.validate(this.props.value, this.schema) ? null : tv4.error;
+    this.props.onError(error);
+    this.setState(setError(error, this.state));
   }
 
   onChange(value) {

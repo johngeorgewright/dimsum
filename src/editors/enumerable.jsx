@@ -59,7 +59,6 @@ export default class EnumEditor extends Editor {
 
 EnumEditor.propTypes = {
   enum: PropTypes.array,
-  multi: PropTypes.bool,
   type: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number
@@ -79,7 +78,7 @@ EnumEditor.propTypes = {
     default:
       return new Error(`Cannot use an enum of type "${type}"`);
     }
-    return PropTypes.arrayOf(type)(props, propName, componentName);
+    return type(props, propName, componentName);
   }
 };
 

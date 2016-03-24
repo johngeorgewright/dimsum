@@ -30,7 +30,8 @@
     "react-dom": "^0.14.0",
     "react-highlight": "^0.7.0",
     "react-mixin": "^2.0.2",
-    "react-select": "^1.0.0-beta8"
+    "react-select": "^1.0.0-beta8",
+    "tv4": "^1.2.7"
   },
   "peerDependencies": {
     "react": "^0.14.0"
