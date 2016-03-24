@@ -2,8 +2,12 @@ import React, {Component} from 'react';
 import {render} from 'react-dom';
 import DimSum from 'react-dim-sum';
 import {assoc} from 'ramda';
+import AceEditor from 'react-ace';
+import Highlight from 'react-highlight';
+import 'brace/mode/json';
+import 'brace/theme/github';
 
-let schema = {
+const schema = {
   name: 'test',
   title: 'Test',
   type: 'object',
@@ -98,13 +102,14 @@ class Example extends Component {
   render() {
     return (
       <div>
-        <textarea
-          defaultValue={stringify(this.state.schema)}
+        <h2>Schema</h2>
+        <AceEditor
+          mode="json"
+          theme="github"
           onChange={this.onSchemaChange.bind(this)}
-          rows="10"
-          style={{width: '100%'}}
-        >
-        </textarea>
+          value={stringify(this.state.schema)}
+        />
+        <h2>Example Editor</h2>
         {this.errors}
         <DimSum
           onChange={this.setValue.bind(this)}
@@ -116,9 +121,10 @@ class Example extends Component {
         <button onClick={this.validate.bind(this)}>
           Validate
         </button>
-        <pre>
+        <h2>Resulting Value</h2>
+        <Highlight className="json">
           {stringify(this.state.value)}
-        </pre>
+        </Highlight>
       </div>
     );
   }
