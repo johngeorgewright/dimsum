@@ -1,26 +1,29 @@
 import React, {PropTypes} from 'react';
-import Editor from '../../Editor.jsx';
+import Editor from '../Editor.jsx';
 
-export default class BooleanEditor extends Editor {
+export default class NumberEditor extends Editor {
   constructor(...args) {
     super(...args);
     this.onChange = this.onChange.bind(this);
   }
 
   get input() {
-    let {props: {name}} = this;
+    let {props} = this;
+    let {name} = props;
     return (
       <input
         id={name}
         name={name}
         onChange={this.onChange}
-        type="checkbox"
+        required={props.isRequired}
+        type="number"
+        value={props.value}
       />
     );
   }
 
   onChange(event) {
-    this.props.onChange(event.target.checked);
+    this.props.onChange(+event.target.value);
   }
 
   render() {
@@ -33,6 +36,8 @@ export default class BooleanEditor extends Editor {
   }
 }
 
-BooleanEditor.propTypes = {
-  value: PropTypes.bool
+NumberEditor.propTypes = {
+  value: PropTypes.number
 };
+
+NumberEditor.enumerable = true;

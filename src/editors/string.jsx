@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
-import Editor from '../../Editor.jsx';
+import Editor from '../Editor.jsx';
 
-export default class NumberEditor extends Editor {
+export default class StringEditor extends Editor {
   constructor(...args) {
     super(...args);
     this.onChange = this.onChange.bind(this);
@@ -9,21 +9,20 @@ export default class NumberEditor extends Editor {
 
   get input() {
     let {props} = this;
-    let {name} = props;
     return (
       <input
-        id={name}
-        name={name}
+        id={props.name}
+        name={props.name}
         onChange={this.onChange}
         required={props.isRequired}
-        type="number"
+        type="text"
         value={props.value}
       />
     );
   }
 
   onChange(event) {
-    this.props.onChange(+event.target.value);
+    this.props.onChange(event.target.value);
   }
 
   render() {
@@ -36,8 +35,8 @@ export default class NumberEditor extends Editor {
   }
 }
 
-NumberEditor.propTypes = {
-  value: PropTypes.number
+StringEditor.propTypes = {
+  value: PropTypes.string
 };
 
-NumberEditor.enumerable = true;
+StringEditor.enumerable = true;

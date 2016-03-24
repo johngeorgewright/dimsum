@@ -1,9 +1,13 @@
 import React, {PropTypes, Stylesheet} from 'react';
-import Editor from '../../Editor.jsx';
+import Editor from '../Editor.jsx';
 import Select from 'react-select';
-import {prop} from 'ramda';
+import {both, either, head, map, pipe, prop} from 'ramda';
 
-let getValue = prop('value');
+const isRequired = prop('isRequired');
+const whenRequired = both(isRequired);
+const firstEnumValue = pipe(prop('enum'), head);
+const getValue = prop('value');
+const getValues = map(getValue);
 
 export default class EnumEditor extends Editor {
   constructor(...args) {
@@ -35,13 +39,12 @@ export default class EnumEditor extends Editor {
   }
 
   get value() {
-    let {props} = this;
-    return props.value || (props.isRequired && props.enum[0]);
+    return either(getValue, whenRequired(firstEnumValue))(this.props);
   }
 
   onChange(selected) {
     let {props} = this;
-    props.onChange(props.multi ? (selected || []).map(getValue) : selected.value);
+    props.onChange(props.multi ? getValues(selected || []) : selected.value);
   }
 
   render() {

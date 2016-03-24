@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
-import EditorFactory from '../../EditorFactory.jsx';
-import Editor from '../../Editor.jsx';
+import EditorFactory from '../EditorFactory.jsx';
+import Editor from '../Editor.jsx';
 import {__, append, inc, pipe, remove, toString, update} from 'ramda';
 
 let editorName = pipe(inc, toString);

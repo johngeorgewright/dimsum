@@ -3,9 +3,9 @@ import * as editors from './editors';
 
 export default class EditorFactory extends Component {
   get Editor() {
-    let Editor = editors[this.props.type].default;
+    let Editor = editors[this.props.type];
     return this.props.enum && Editor && Editor.enumerable
-      ? editors.enumerable.default
+      ? editors.enumerable
       : Editor;
   }
 
