@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
 import DimSum from 'react-dim-sum';
-import {assoc} from 'ramda';
+import {assoc, merge} from 'ramda';
 import AceEditor from 'react-ace';
 import Highlight from 'react-highlight';
 import 'brace/mode/json';
@@ -57,6 +57,7 @@ class Example extends Component {
     super(...args);
     this.state = {
       schema,
+      rawSchema: stringify(schema),
       value: {}
     };
   }
@@ -70,11 +71,17 @@ class Example extends Component {
   }
 
   onSchemaChange(schemaString) {
+    let schema;
+    let rawSchema = schemaString;
     try {
-      let schema = JSON.parse(schemaString);
-      this.setSchema(schema);
+      schema = JSON.parse(schemaString);
     } catch (e) {
+      schema = this.state.schema;
     }
+    this.setState(merge(this.state, {
+      rawSchema: schemaString,
+      schema
+    }));
   }
 
   validate() {
@@ -112,7 +119,7 @@ class Example extends Component {
           mode="json"
           theme="github"
           onChange={this.onSchemaChange.bind(this)}
-          value={stringify(this.state.schema)}
+          value={this.state.rawSchema}
         />
       </div>
     );

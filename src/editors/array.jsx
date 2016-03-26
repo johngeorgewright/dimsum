@@ -3,8 +3,8 @@ import EditorFactory from '../EditorFactory.jsx';
 import Editor from '../Editor.jsx';
 import {__, append, inc, pipe, remove, toString, update} from 'ramda';
 
-let editorName = pipe(inc, toString);
-let addItem = append(undefined);
+const editorName = pipe(inc, toString);
+const addItem = append(undefined);
 let removeAtIndex = remove(__, 1);
 
 export default class ArrayEditor extends Editor {
