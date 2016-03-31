@@ -1,5 +1,5 @@
 import React, {PropTypes, Stylesheet} from 'react';
-import Editor from '../Editor.jsx';
+import Editor from '../Editor';
 import Select from 'react-select';
 import {both, either, head, map, pipe, prop} from 'ramda';
 

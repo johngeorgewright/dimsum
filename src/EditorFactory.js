@@ -1,11 +1,11 @@
 import React, {Component, PropTypes} from 'react';
-import * as editors from './editors';
 
 export default class EditorFactory extends Component {
   get Editor() {
-    let Editor = editors[this.props.type];
-    return this.props.enum && Editor && Editor.enumerable
-      ? editors.enumerable
+    let {props} = this;
+    let Editor = props.theme[props.type];
+    return props.enum && Editor && Editor.enumerable
+      ? props.theme.enumerable
       : Editor;
   }
 
@@ -20,5 +20,6 @@ export default class EditorFactory extends Component {
 EditorFactory.propTypes = {
   enum: PropTypes.array,
   name: PropTypes.string.isRequired,
+  theme: PropTypes.object.isRequired,
   type: PropTypes.string.isRequired
 };

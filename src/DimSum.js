@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
-import EditorFactory from './EditorFactory.jsx';
+import * as defaultTheme from './editors';
+import EditorFactory from './EditorFactory';
 import {assoc, omit, merge} from 'ramda';
 import tv4 from 'tv4';
 
@@ -17,11 +18,8 @@ export default class DimSum extends Component {
     return schemaFromProps(this.props);
   }
 
-  componentWillReceiveProps(props) {
-    this.setState(merge(this.state, {
-      errors: props.errors,
-      value: props.value
-    }));
+  componentWillReceiveProps({errors, value}) {
+    this.setState(merge(this.state, {errors, value}));
   }
 
   validate() {
@@ -40,7 +38,7 @@ export default class DimSum extends Component {
       <EditorFactory
         errors={this.state.errors}
         onChange={this.onChange}
-        value={this.props.value}
+        value={this.state.value}
         {...this.props}
       />
     );
@@ -50,11 +48,13 @@ export default class DimSum extends Component {
 DimSum.propTypes = {
   onChange: PropTypes.func,
   onError: PropTypes.func,
+  theme: PropTypes.object,
   value: PropTypes.object
 };
 
 DimSum.defaultProps = {
   onChange: () => {},
   onError: () => {},
+  theme: defaultTheme,
   value: {}
 };

@@ -2,7 +2,7 @@
   "name": "react-dim-sum",
   "version": "1.0.0",
   "description": "Dim Sum",
-  "main": "lib/DimSum.jsx",
+  "main": "lib/DimSum.js",
   "author": "John Wright",
   "homepage": "https://github.com/johngeorgewright/react-dim-sum",
   "repository": {

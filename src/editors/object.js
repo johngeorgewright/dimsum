@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react';
-import EditorFactory from '../EditorFactory.jsx';
-import Editor from '../Editor.jsx';
+import EditorFactory from '../EditorFactory';
+import Editor from '../Editor';
 import {assoc, keys} from 'ramda';
 
 export default class ObjectEditor extends Editor {
@@ -33,6 +33,7 @@ export default class ObjectEditor extends Editor {
         key={key}
         name={name}
         onChange={this.createUpdater(name)}
+        theme={this.props.theme}
         value={value && value[name]}
         {...properties[name]}
       />

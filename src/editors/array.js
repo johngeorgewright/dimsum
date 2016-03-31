@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
-import EditorFactory from '../EditorFactory.jsx';
-import Editor from '../Editor.jsx';
+import EditorFactory from '../EditorFactory';
+import Editor from '../Editor';
 import {__, append, inc, pipe, remove, toString, update} from 'ramda';
 
 const editorName = pipe(inc, toString);
@@ -66,6 +66,7 @@ export default class ArrayEditor extends Editor {
       <EditorFactory
         name={editorName(key)}
         onChange={this.createEditorUpdater(key)}
+        theme={this.props.theme}
         value={val}
         {...this.props.items}
       />

@@ -19,8 +19,7 @@ var taskConfig = {
       'react',
       'react-dom'
     ],
-    lib: 'lib',
-    file: 'DimSum.jsx'
+    lib: 'lib'
   },
 
   example: {

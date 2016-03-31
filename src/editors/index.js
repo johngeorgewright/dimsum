@@ -1,6 +1,6 @@
-export {default as array} from './array.jsx';
-export {default as boolean} from './boolean.jsx';
-export {default as enumerable} from './enumerable.jsx';
-export {default as number} from './number.jsx';
-export {default as object} from './object.jsx';
-export {default as string} from './string.jsx';
+export {default as array} from './array';
+export {default as boolean} from './boolean';
+export {default as enumerable} from './enumerable';
+export {default as number} from './number';
+export {default as object} from './object';
+export {default as string} from './string';
