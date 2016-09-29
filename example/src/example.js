@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, PropTypes} from 'react';
 import {render} from 'react-dom';
 import DimSum from 'react-dim-sum';
 import {assoc, merge} from 'ramda';
@@ -56,6 +56,7 @@ class Example extends Component {
   constructor(...args) {
     super(...args);
     this.state = {
+      info: {},
       schema,
       rawSchema: stringify(schema),
       value: {}
@@ -90,6 +91,18 @@ class Example extends Component {
 
   handleError(error) {
     this.setState(replaceError(error, this.state));
+  }
+
+  handleInfo(info) {
+    this.setState({...this.state, info});
+  }
+
+  getChildContext() {
+    return {
+      user: {
+        name: 'Test User'
+      }
+    };
   }
 
   get error() {
@@ -130,11 +143,13 @@ class Example extends Component {
       <div>
         <h2>Example Editor</h2>
         <DimSum
+          {...this.state.schema}
+          info={this.state.info}
           onChange={this.setValue.bind(this)}
           onError={this.handleError.bind(this)}
+          onInfo={this.handleInfo.bind(this)}
           ref="editor"
           value={this.state.value}
-          {...this.state.schema}
         />
         <button onClick={this.validate.bind(this)}>
           Validate
@@ -165,5 +180,11 @@ class Example extends Component {
     );
   }
 }
+
+Example.childContextTypes = {
+  user: PropTypes.shape({
+    name: PropTypes.string.isRequired
+  }).isRequired
+};
 
 render(<Example/>, document.getElementById('app'));

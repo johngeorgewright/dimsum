@@ -1,60 +1,65 @@
 import React, {Component, PropTypes} from 'react';
 import * as defaultTheme from './editors';
+import Editor from './Editor';
 import EditorFactory from './EditorFactory';
-import {assoc, omit, merge} from 'ramda';
+import * as DimSumPropTypes from './PropTypes';
 import tv4 from 'tv4';
 
-const schemaFromProps = omit(['onChange', 'value']);
-const setError = assoc('error');
+export {defaultTheme, Editor, EditorFactory, PropTypes};
 
 export default class DimSum extends Component {
   constructor(props, ...args) {
     super(props, ...args);
     this.onChange = this.onChange.bind(this);
-    this.state = {};
   }
 
   get schema() {
-    return schemaFromProps(this.props);
+    let schema = {...this.props};
+    delete schema.onChange;
+    delete schema.value;
+    return schema;
   }
 
-  componentWillReceiveProps({errors, value}) {
-    this.setState(merge(this.state, {errors, value}));
-  }
+  // validate() {
+  //   let error = tv4.validate(this.props.value, this.schema) ? null : tv4.error;
+  //   this.props.onError(error);
+  //   this.setState({error, ...this.state});
+  // }
 
-  validate() {
-    let error = tv4.validate(this.props.value, this.schema) ? null : tv4.error;
-    this.props.onError(error);
-    this.setState(setError(error, this.state));
-  }
-
-  onChange(value) {
-    this.props.onChange(value);
-    this.setState(value);
+  onChange(value, patch) {
+    this.props.onChange(Object.assign({}, value), patch);
   }
 
   render() {
     return (
       <EditorFactory
-        errors={this.state.errors}
-        onChange={this.onChange}
-        value={this.state.value}
         {...this.props}
+        info={this.props.info}
+        onChange={this.onChange}
+        value={this.props.value}
       />
     );
   }
 }
 
 DimSum.propTypes = {
+  info: PropTypes.object,
+  name: PropTypes.string.isRequired,
   onChange: PropTypes.func,
   onError: PropTypes.func,
   theme: PropTypes.object,
+  type: PropTypes.string.isRequired,
   value: PropTypes.object
 };
 
 DimSum.defaultProps = {
+  info: {},
   onChange: () => {},
   onError: () => {},
   theme: defaultTheme,
   value: {}
+};
+
+DimSum.contextTypes = {
+  user: DimSumPropTypes.User.isRequired
 };

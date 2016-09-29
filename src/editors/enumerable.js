@@ -1,18 +1,14 @@
 import React, {PropTypes, Stylesheet} from 'react';
 import Editor from '../Editor';
 import Select from 'react-select';
-import {both, either, head, map, pipe, prop} from 'ramda';
 
-const isRequired = prop('isRequired');
-const whenRequired = both(isRequired);
-const firstEnumValue = pipe(prop('enum'), head);
-const getValue = prop('value');
-const getValues = map(getValue);
+const getValue = o => o.value;
+const getValues = a => a.map(getValue);
 
 export default class EnumEditor extends Editor {
   constructor(...args) {
     super(...args);
-    this.onChange = this.onChange.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   get input() {
@@ -22,7 +18,9 @@ export default class EnumEditor extends Editor {
         id={props.name}
         multi={props.multi}
         name={props.name}
-        onChange={this.onChange}
+        onBlur={this.handleBlur}
+        onChange={this.handleChange}
+        onFocus={this.handleFocus}
         options={this.options}
         value={this.value}
       >
@@ -39,10 +37,11 @@ export default class EnumEditor extends Editor {
   }
 
   get value() {
-    return either(getValue, whenRequired(firstEnumValue))(this.props);
+    const {props} = this;
+    return props.value || (props.isRequired && props.enum[0]);
   }
 
-  onChange(selected) {
+  handleChange(selected) {
     let {props} = this;
     let value;
     if (selected) {
@@ -50,19 +49,12 @@ export default class EnumEditor extends Editor {
     }
     props.onChange(value);
   }
-
-  render() {
-    return (
-      <div>
-        {this.label}
-        {this.input}
-      </div>
-    );
-  }
 }
 
 EnumEditor.propTypes = {
+  ...Editor.propTypes,
   enum: PropTypes.array,
+  multi: PropTypes.bool,
   type: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number
@@ -80,6 +72,7 @@ EnumEditor.propTypes = {
 };
 
 EnumEditor.defaultProps = {
+  ...Editor.defaultProps,
   enum: [],
   multi: false
 };
