@@ -13,6 +13,7 @@ export default class ArrayEditor extends Editor {
     const isLast = i => i === (this.props.value.length - 1);
 
     let result = [];
+    console.log('array value', value)
 
     value.forEach((val, key) => {
       result.push(

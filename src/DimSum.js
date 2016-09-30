@@ -5,7 +5,7 @@ import EditorFactory from './EditorFactory';
 import * as DimSumPropTypes from './PropTypes';
 import tv4 from 'tv4';
 
-export {defaultTheme, Editor, EditorFactory, PropTypes};
+export {defaultTheme, Editor, EditorFactory, DimSumPropTypes as PropTypes};
 
 export default class DimSum extends Component {
   constructor(props, ...args) {

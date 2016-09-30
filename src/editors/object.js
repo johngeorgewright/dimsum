@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import EditorFactory from '../EditorFactory';
 import Editor from '../Editor';
+import classNames from 'classnames';
 
 class BaseObjectEditor extends Editor {
   constructor(...args) {

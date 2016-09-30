@@ -3081,6 +3081,10 @@ var _EditorFactory = require('./EditorFactory');
 
 var _EditorFactory2 = _interopRequireDefault(_EditorFactory);
 
+var _PropTypes = require('./PropTypes');
+
+var DimSumPropTypes = _interopRequireWildcard(_PropTypes);
+
 var _tv4 = require('tv4');
 
 var _tv42 = _interopRequireDefault(_tv4);
@@ -3088,6 +3092,7 @@ var _tv42 = _interopRequireDefault(_tv4);
 exports.defaultTheme = defaultTheme;
 exports.Editor = _Editor2['default'];
 exports.EditorFactory = _EditorFactory2['default'];
+exports.PropTypes = DimSumPropTypes;
 
 var DimSum = (function (_Component) {
   _inherits(DimSum, _Component);
@@ -3159,8 +3164,12 @@ DimSum.defaultProps = {
   value: {}
 };
 
+DimSum.contextTypes = {
+  user: DimSumPropTypes.User.isRequired
+};
+
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./Editor":9,"./EditorFactory":10,"./editors":14,"tv4":7}],9:[function(require,module,exports){
+},{"./Editor":9,"./EditorFactory":10,"./PropTypes":11,"./editors":15,"tv4":7}],9:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -3168,11 +3177,17 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
@@ -3182,24 +3197,87 @@ var _react = (typeof window !== "undefined" ? window['React'] : typeof global !=
 
 var _react2 = _interopRequireDefault(_react);
 
+var _classnames = require('classnames');
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+var _PropTypes = require('./PropTypes');
+
+var DimSumPropTypes = _interopRequireWildcard(_PropTypes);
+
 var Editor = (function (_Component) {
   _inherits(Editor, _Component);
 
   function Editor() {
     _classCallCheck(this, Editor);
 
-    _get(Object.getPrototypeOf(Editor.prototype), 'constructor', this).apply(this, arguments);
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _get(Object.getPrototypeOf(Editor.prototype), 'constructor', this).apply(this, args);
+    this.handleBlur = this.handleBlur.bind(this);
+    this.handleFocus = this.handleFocus.bind(this);
   }
 
   _createClass(Editor, [{
+    key: 'handleFocus',
+    value: function handleFocus() {
+      var props = this.props;
+
+      var info = (props.info.focus || []).concat(this.context.user.name);
+      props.onInfo(_extends({}, props.info, {
+        focus: [].concat(_toConsumableArray(new Set(info)))
+      }));
+    }
+  }, {
+    key: 'handleBlur',
+    value: function handleBlur() {
+      var props = this.props;
+
+      props.onInfo(_extends({}, props.info, {
+        focus: this.usersThatAreFocused
+      }));
+    }
+  }, {
     key: 'render',
     value: function render() {
       return _react2['default'].createElement(
         'div',
-        null,
+        { className: (0, _classnames2['default'])('form-group', {
+            'has-warning': this.usersThatAreFocused.length
+          }) },
         this.label,
-        this.input
+        this.input,
+        this.collaborators
       );
+    }
+  }, {
+    key: 'usersThatAreFocused',
+    get: function get() {
+      var _props$info$focus = this.props.info.focus;
+      var focus = _props$info$focus === undefined ? [] : _props$info$focus;
+
+      var index = focus.indexOf(this.context.user.name);
+      return [].concat(_toConsumableArray(focus.slice(0, index)), _toConsumableArray(focus.slice(index + 1)));
+    }
+  }, {
+    key: 'collaborators',
+    get: function get() {
+      return this.usersThatAreFocused.length ? _react2['default'].createElement(
+        'p',
+        { className: 'help-block' },
+        this.usersThatAreFocused.map(function (user, key) {
+          return _react2['default'].createElement(
+            'span',
+            {
+              className: 'label label-warning',
+              key: key
+            },
+            user
+          );
+        })
+      ) : _react2['default'].createElement('span', null);
     }
   }, {
     key: 'input',
@@ -3228,7 +3306,9 @@ var Editor = (function (_Component) {
 exports['default'] = Editor;
 
 Editor.propTypes = {
-  info: _react.PropTypes.object,
+  info: _react.PropTypes.shape({
+    focus: _react.PropTypes.array
+  }),
   isRequired: _react.PropTypes.bool,
   name: function name(props, propName) {
     if (!/^[a-z0-9_]+$/i.test(props[propName])) {
@@ -3240,15 +3320,21 @@ Editor.propTypes = {
   title: _react.PropTypes.string
 };
 
-Editor.defaultValues = {
-  info: {},
+Editor.defaultProps = {
+  info: {
+    focus: []
+  },
   isRequired: false,
   onInfo: function onInfo() {}
+};
+
+Editor.contextTypes = {
+  user: DimSumPropTypes.User.isRequired
 };
 module.exports = exports['default'];
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],10:[function(require,module,exports){
+},{"./PropTypes":11,"classnames":undefined}],10:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -3317,6 +3403,22 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
+var _react = (typeof window !== "undefined" ? window['React'] : typeof global !== "undefined" ? global['React'] : null);
+
+var User = _react.PropTypes.shape({
+  name: _react.PropTypes.string.isRequired
+});
+exports.User = User;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],12:[function(require,module,exports){
+(function (global){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3368,10 +3470,11 @@ var ArrayEditor = (function (_Editor) {
       return _react2['default'].createElement(
         'button',
         {
+          className: 'btn',
           onClick: this.createEditorRemover(key),
           type: 'button'
         },
-        'Remove'
+        _react2['default'].createElement('i', { className: 'glyphicon glyphicon-minus' })
       );
     }
   }, {
@@ -3424,11 +3527,10 @@ var ArrayEditor = (function (_Editor) {
     key: 'render',
     value: function render() {
       return _react2['default'].createElement(
-        'fieldset',
-        null,
+        'div',
+        { className: 'panel panel-default' },
         this.label,
-        this.editors,
-        this.addButton
+        this.editors
       );
     }
   }, {
@@ -3436,21 +3538,65 @@ var ArrayEditor = (function (_Editor) {
     get: function get() {
       var _this = this;
 
-      return this.props.value.map(function (val, key) {
-        return _react2['default'].createElement(
+      var value = this.props.value;
+
+      var isLast = function isLast(i) {
+        return i === _this.props.value.length - 1;
+      };
+
+      var result = [];
+
+      value.forEach(function (val, key) {
+        result.push(_react2['default'].createElement(
           'div',
-          { key: key },
-          _this.editor(key, val),
-          _this.removeButton(key)
-        );
+          {
+            className: 'panel-body',
+            key: key + '-editor'
+          },
+          _this.editor(key, val)
+        ));
+        result.push(_react2['default'].createElement(
+          'div',
+          {
+            className: 'panel-footer',
+            key: key + '-footer'
+          },
+          isLast(key) ? _react2['default'].createElement(
+            'div',
+            { className: 'btn-group' },
+            _this.removeButton(key),
+            _this.addButton
+          ) : _this.removeButton(key)
+        ));
       });
+
+      if (!result.length) {
+        result.push(_react2['default'].createElement(
+          'div',
+          {
+            className: 'panel-body',
+            key: 'body'
+          },
+          'No ' + this.title
+        ));
+        result.push(_react2['default'].createElement(
+          'div',
+          {
+            className: 'panel-footer',
+            key: 'footer'
+          },
+          this.addButton
+        ));
+      }
+
+      return result;
     }
   }, {
     key: 'label',
     get: function get() {
       return _react2['default'].createElement(
-        'legend',
-        null,
+        'div',
+        { className: 'panel-heading' },
         this.title
       );
     }
@@ -3460,10 +3606,11 @@ var ArrayEditor = (function (_Editor) {
       return _react2['default'].createElement(
         'button',
         {
+          className: 'btn',
           onClick: this.addEditor,
           type: 'button'
         },
-        'Add ' + this.title
+        _react2['default'].createElement('i', { className: 'glyphicon glyphicon-plus' })
       );
     }
   }]);
@@ -3473,28 +3620,30 @@ var ArrayEditor = (function (_Editor) {
 
 exports['default'] = ArrayEditor;
 
-ArrayEditor.propTypes = {
+ArrayEditor.propTypes = _extends({}, _Editor3['default'].propTypes, {
   info: _react.PropTypes.array,
   items: _react.PropTypes.object.isRequired,
   uniqueItems: _react.PropTypes.bool,
   value: _react.PropTypes.array
-};
+});
 
-ArrayEditor.defaultProps = {
+ArrayEditor.defaultProps = _extends({}, _Editor3['default'].defaultProps, {
   info: [],
   uniqueItems: false,
   value: []
-};
+});
 module.exports = exports['default'];
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../Editor":9,"../EditorFactory":10}],12:[function(require,module,exports){
+},{"../Editor":9,"../EditorFactory":10}],13:[function(require,module,exports){
 (function (global){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -3514,6 +3663,10 @@ var _Editor2 = require('../Editor');
 
 var _Editor3 = _interopRequireDefault(_Editor2);
 
+var _classnames = require('classnames');
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
 var BooleanEditor = (function (_Editor) {
   _inherits(BooleanEditor, _Editor);
 
@@ -3525,13 +3678,35 @@ var BooleanEditor = (function (_Editor) {
     }
 
     _get(Object.getPrototypeOf(BooleanEditor.prototype), 'constructor', this).apply(this, args);
-    this.onChange = this.onChange.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   _createClass(BooleanEditor, [{
-    key: 'onChange',
-    value: function onChange(event) {
+    key: 'handleChange',
+    value: function handleChange(event) {
       this.props.onChange(event.target.checked);
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2['default'].createElement(
+        'div',
+        { className: (0, _classnames2['default'])('checkbox', {
+            'has-warning': this.usersThatAreFocused.length
+          }) },
+        _react2['default'].createElement(
+          'label',
+          null,
+          this.input,
+          this.label
+        ),
+        this.collaborators
+      );
+    }
+  }, {
+    key: 'label',
+    get: function get() {
+      return this.title;
     }
   }, {
     key: 'input',
@@ -3542,7 +3717,8 @@ var BooleanEditor = (function (_Editor) {
         checked: this.props.value,
         id: name,
         name: name,
-        onChange: this.onChange,
+        onBlur: this.handleBlur,
+        onChange: this.handleChange,
         onFocus: this.handleFocus,
         type: 'checkbox'
       });
@@ -3554,19 +3730,21 @@ var BooleanEditor = (function (_Editor) {
 
 exports['default'] = BooleanEditor;
 
-BooleanEditor.propTypes = {
+BooleanEditor.propTypes = _extends({}, _Editor3['default'].propTypes, {
   value: _react.PropTypes.bool
-};
+});
 module.exports = exports['default'];
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../Editor":9}],13:[function(require,module,exports){
+},{"../Editor":9,"classnames":undefined}],14:[function(require,module,exports){
 (function (global){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -3608,12 +3786,12 @@ var EnumEditor = (function (_Editor) {
     }
 
     _get(Object.getPrototypeOf(EnumEditor.prototype), 'constructor', this).apply(this, args);
-    this.onChange = this.onChange.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   _createClass(EnumEditor, [{
-    key: 'onChange',
-    value: function onChange(selected) {
+    key: 'handleChange',
+    value: function handleChange(selected) {
       var props = this.props;
 
       var value = undefined;
@@ -3633,7 +3811,8 @@ var EnumEditor = (function (_Editor) {
           id: props.name,
           multi: props.multi,
           name: props.name,
-          onChange: this.onChange,
+          onBlur: this.handleBlur,
+          onChange: this.handleChange,
           onFocus: this.handleFocus,
           options: this.options,
           value: this.value
@@ -3665,8 +3844,9 @@ var EnumEditor = (function (_Editor) {
 
 exports['default'] = EnumEditor;
 
-EnumEditor.propTypes = {
+EnumEditor.propTypes = _extends({}, _Editor3['default'].propTypes, {
   'enum': _react.PropTypes.array,
+  multi: _react.PropTypes.bool,
   type: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.number]).isRequired,
   value: function value(props, propName, componentName) {
     if (typeof props[propName] === 'undefined') {
@@ -3678,16 +3858,16 @@ EnumEditor.propTypes = {
     }
     return type(props, propName, componentName);
   }
-};
+});
 
-EnumEditor.defaultProps = {
+EnumEditor.defaultProps = _extends({}, _Editor3['default'].defaultProps, {
   'enum': [],
   multi: false
-};
+});
 module.exports = exports['default'];
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../Editor":9,"react-select":3}],14:[function(require,module,exports){
+},{"../Editor":9,"react-select":3}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -3720,7 +3900,7 @@ var _string = require('./string');
 
 exports.string = _interopRequire(_string);
 
-},{"./array":11,"./boolean":12,"./enumerable":13,"./number":15,"./object":16,"./string":17}],15:[function(require,module,exports){
+},{"./array":12,"./boolean":13,"./enumerable":14,"./number":16,"./object":17,"./string":18}],16:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -3751,36 +3931,18 @@ var _Editor3 = _interopRequireDefault(_Editor2);
 var NumberEditor = (function (_Editor) {
   _inherits(NumberEditor, _Editor);
 
-  function NumberEditor(props) {
-    var _get2;
-
+  function NumberEditor() {
     _classCallCheck(this, NumberEditor);
 
-    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
     }
 
-    (_get2 = _get(Object.getPrototypeOf(NumberEditor.prototype), 'constructor', this)).call.apply(_get2, [this, props].concat(args));
-    this.handleBlur = this.handleBlur.bind(this);
+    _get(Object.getPrototypeOf(NumberEditor.prototype), 'constructor', this).apply(this, args);
     this.handleChange = this.handleChange.bind(this);
-    this.handleFocus = this.handleFocus.bind(this);
   }
 
   _createClass(NumberEditor, [{
-    key: 'handleBlur',
-    value: function handleBlur() {
-      this.props.onInfo(_extends({}, this.props.info, {
-        focus: false
-      }));
-    }
-  }, {
-    key: 'handleFocus',
-    value: function handleFocus() {
-      this.props.onInfo(_extends({}, this.props.info, {
-        focus: true
-      }));
-    }
-  }, {
     key: 'handleChange',
     value: function handleChange(event) {
       this.props.onChange(+event.target.value);
@@ -3791,8 +3953,8 @@ var NumberEditor = (function (_Editor) {
       var props = this.props;
       var name = props.name;
 
-      console.log(props);
       return _react2['default'].createElement('input', {
+        className: 'form-control',
         id: name,
         name: name,
         onBlur: this.handleBlur,
@@ -3810,21 +3972,19 @@ var NumberEditor = (function (_Editor) {
 
 exports['default'] = NumberEditor;
 
-NumberEditor.propTypes = {
-  info: _react.PropTypes.object,
+NumberEditor.propTypes = _extends({}, _Editor3['default'].propTypes, {
   value: _react.PropTypes.number
-};
+});
 
-NumberEditor.defaultProps = {
-  info: {},
+NumberEditor.defaultProps = _extends({}, _Editor3['default'].defaultProps, {
   value: 0
-};
+});
 
 NumberEditor.enumerable = true;
 module.exports = exports['default'];
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../Editor":9}],16:[function(require,module,exports){
+},{"../Editor":9}],17:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -3858,21 +4018,25 @@ var _Editor2 = require('../Editor');
 
 var _Editor3 = _interopRequireDefault(_Editor2);
 
-var ObjectEditor = (function (_Editor) {
-  _inherits(ObjectEditor, _Editor);
+var _classnames = require('classnames');
 
-  function ObjectEditor() {
-    _classCallCheck(this, ObjectEditor);
+var _classnames2 = _interopRequireDefault(_classnames);
+
+var BaseObjectEditor = (function (_Editor) {
+  _inherits(BaseObjectEditor, _Editor);
+
+  function BaseObjectEditor() {
+    _classCallCheck(this, BaseObjectEditor);
 
     for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
 
-    _get(Object.getPrototypeOf(ObjectEditor.prototype), 'constructor', this).apply(this, args);
+    _get(Object.getPrototypeOf(BaseObjectEditor.prototype), 'constructor', this).apply(this, args);
     this.editor = this.editor.bind(this);
   }
 
-  _createClass(ObjectEditor, [{
+  _createClass(BaseObjectEditor, [{
     key: 'isRequired',
     value: function isRequired(name) {
       return this.props.required.indexOf(name) !== -1;
@@ -3916,6 +4080,82 @@ var ObjectEditor = (function (_Editor) {
       };
     }
   }, {
+    key: 'editors',
+    get: function get() {
+      return Object.keys(this.props.properties).map(this.editor);
+    }
+  }]);
+
+  return BaseObjectEditor;
+})(_Editor3['default']);
+
+BaseObjectEditor.propTypes = _extends({}, _Editor3['default'].propTypes, {
+  info: _react.PropTypes.object,
+  level: _react.PropTypes.number,
+  onInfo: _react.PropTypes.func,
+  properties: _react.PropTypes.object.isRequired,
+  required: _react.PropTypes.array,
+  value: _react.PropTypes.object
+});
+
+BaseObjectEditor.defaultProps = _extends({}, _Editor3['default'].defaultProps, {
+  info: {},
+  level: 1,
+  onInfo: function onInfo() {},
+  required: [],
+  value: {}
+});
+
+var TopLevelObjectEditor = (function (_BaseObjectEditor) {
+  _inherits(TopLevelObjectEditor, _BaseObjectEditor);
+
+  function TopLevelObjectEditor() {
+    _classCallCheck(this, TopLevelObjectEditor);
+
+    _get(Object.getPrototypeOf(TopLevelObjectEditor.prototype), 'constructor', this).apply(this, arguments);
+  }
+
+  _createClass(TopLevelObjectEditor, [{
+    key: 'render',
+    value: function render() {
+      return _react2['default'].createElement(
+        'div',
+        null,
+        this.editors
+      );
+    }
+  }]);
+
+  return TopLevelObjectEditor;
+})(BaseObjectEditor);
+
+var FieldsetObjectEditor = (function (_BaseObjectEditor2) {
+  _inherits(FieldsetObjectEditor, _BaseObjectEditor2);
+
+  function FieldsetObjectEditor(props) {
+    var _get2;
+
+    _classCallCheck(this, FieldsetObjectEditor);
+
+    for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      args[_key2 - 1] = arguments[_key2];
+    }
+
+    (_get2 = _get(Object.getPrototypeOf(FieldsetObjectEditor.prototype), 'constructor', this)).call.apply(_get2, [this, props].concat(args));
+    this.toggle = this.toggle.bind(this);
+    this.state = {
+      open: props.open
+    };
+  }
+
+  _createClass(FieldsetObjectEditor, [{
+    key: 'toggle',
+    value: function toggle() {
+      this.setState(_extends({}, this.state, {
+        open: !this.state.open
+      }));
+    }
+  }, {
     key: 'render',
     value: function render() {
       return _react2['default'].createElement(
@@ -3928,44 +4168,118 @@ var ObjectEditor = (function (_Editor) {
   }, {
     key: 'editors',
     get: function get() {
-      return Object.keys(this.props.properties).map(this.editor);
+      return _react2['default'].createElement(
+        'div',
+        {
+          className: (0, _classnames2['default'])('collapse', { 'in': this.state.open })
+        },
+        _get(Object.getPrototypeOf(FieldsetObjectEditor.prototype), 'editors', this)
+      );
     }
   }, {
     key: 'label',
     get: function get() {
-      return this.title ? _react2['default'].createElement(
+      return _react2['default'].createElement(
         'legend',
-        null,
+        { onClick: this.toggle },
+        _react2['default'].createElement('span', {
+          className: 'caret',
+          style: { marginRight: '10px' }
+        }),
         this.title
-      ) : '';
+      );
+    }
+  }]);
+
+  return FieldsetObjectEditor;
+})(BaseObjectEditor);
+
+FieldsetObjectEditor.propTypes = _extends({}, BaseObjectEditor.propTypes, {
+  open: _react.PropTypes.bool
+});
+
+FieldsetObjectEditor.defaultProps = _extends({}, BaseObjectEditor.defaultProps, {
+  open: true
+});
+
+var PanelObjectEditor = (function (_BaseObjectEditor3) {
+  _inherits(PanelObjectEditor, _BaseObjectEditor3);
+
+  function PanelObjectEditor() {
+    _classCallCheck(this, PanelObjectEditor);
+
+    _get(Object.getPrototypeOf(PanelObjectEditor.prototype), 'constructor', this).apply(this, arguments);
+  }
+
+  _createClass(PanelObjectEditor, [{
+    key: 'render',
+    value: function render() {
+      return _react2['default'].createElement(
+        'div',
+        { className: 'panel panel-default' },
+        this.label,
+        this.editors
+      );
+    }
+  }, {
+    key: 'label',
+    get: function get() {
+      return _react2['default'].createElement(
+        'div',
+        { className: 'panel-heading' },
+        this.title
+      );
+    }
+  }, {
+    key: 'editors',
+    get: function get() {
+      return _react2['default'].createElement(
+        'div',
+        { className: 'panel-body' },
+        _get(Object.getPrototypeOf(PanelObjectEditor.prototype), 'editors', this)
+      );
+    }
+  }]);
+
+  return PanelObjectEditor;
+})(BaseObjectEditor);
+
+var ObjectEditor = (function (_BaseObjectEditor4) {
+  _inherits(ObjectEditor, _BaseObjectEditor4);
+
+  function ObjectEditor() {
+    _classCallCheck(this, ObjectEditor);
+
+    _get(Object.getPrototypeOf(ObjectEditor.prototype), 'constructor', this).apply(this, arguments);
+  }
+
+  _createClass(ObjectEditor, [{
+    key: 'render',
+    value: function render() {
+      var level = this.props.level;
+
+      var Behaviour = (function () {
+        switch (level) {
+          case 1:
+            return TopLevelObjectEditor;
+          case 2:
+            return FieldsetObjectEditor;
+          default:
+            return PanelObjectEditor;
+        }
+      })();
+      return _react2['default'].createElement(Behaviour, this.props);
     }
   }]);
 
   return ObjectEditor;
-})(_Editor3['default']);
+})(BaseObjectEditor);
 
 exports['default'] = ObjectEditor;
-
-ObjectEditor.propTypes = {
-  info: _react.PropTypes.object,
-  level: _react.PropTypes.number,
-  onInfo: _react.PropTypes.func,
-  properties: _react.PropTypes.object.isRequired,
-  required: _react.PropTypes.array,
-  value: _react.PropTypes.object
-};
-
-ObjectEditor.defaultProps = {
-  info: {},
-  level: 1,
-  onInfo: function onInfo() {},
-  required: [],
-  value: {}
-};
 module.exports = exports['default'];
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../Editor":9,"../EditorFactory":10}],17:[function(require,module,exports){
+},{"../Editor":9,"../EditorFactory":10,"classnames":undefined}],18:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4006,29 +4320,13 @@ var StringEditor = (function (_Editor) {
     }
 
     (_get2 = _get(Object.getPrototypeOf(StringEditor.prototype), 'constructor', this)).call.apply(_get2, [this, props].concat(args));
-    this.handleBlur = this.handleBlur.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.handleFocus = this.handleFocus.bind(this);
   }
 
   _createClass(StringEditor, [{
-    key: 'handleBlur',
-    value: function handleBlur() {
-      this.props.onInfo(_extends({}, this.props.info, {
-        focus: false
-      }));
-    }
-  }, {
     key: 'handleChange',
     value: function handleChange(event) {
       this.props.onChange(event.target.value);
-    }
-  }, {
-    key: 'handleFocus',
-    value: function handleFocus() {
-      this.props.onInfo(_extends({}, this.props.info, {
-        focus: true
-      }));
     }
   }, {
     key: 'input',
@@ -4036,6 +4334,7 @@ var StringEditor = (function (_Editor) {
       var props = this.props;
 
       return _react2['default'].createElement('input', {
+        className: 'form-control',
         id: props.name,
         name: props.name,
         onBlur: this.handleBlur,
@@ -4053,15 +4352,15 @@ var StringEditor = (function (_Editor) {
 
 exports['default'] = StringEditor;
 
-StringEditor.propTypes = {
+StringEditor.propTypes = _extends({}, _Editor3['default'].propTypes, {
   info: _react.PropTypes.object,
   value: _react.PropTypes.string
-};
+});
 
-StringEditor.defaultProps = {
+StringEditor.defaultProps = _extends({}, _Editor3['default'].defaultProps, {
   info: {},
   value: ''
-};
+});
 
 StringEditor.enumerable = true;
 module.exports = exports['default'];
