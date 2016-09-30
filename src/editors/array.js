@@ -9,59 +9,57 @@ class BaseArrayEditor extends Editor {
     this.addEditor = this.addEditor.bind(this);
   }
 
+  get columnClass() {
+    const size = 12 / this.props.columns;
+    return `col-md-${size}`;
+  }
+
   get editors() {
-    const {props: {value}} = this;
+    const {props: {columns, value}} = this;
     const isLast = i => i === (this.props.value.length - 1);
 
-    let result = [];
+    let items = (value || []).map((val, key) => (
+      <div className='panel-body'>
+        {this.removeButton(key)}
+        {this.editor(key, val)}
+      </div>
+    ));
 
-    (value || []).forEach((val, key) => {
-      result.push(
-        <div
-          className='panel-body'
-          key={`${key}-editor`}
-        >
-          {this.editor(key, val)}
-        </div>
-      );
-      result.push(
-        <div
-          className='panel-footer'
-          key={`${key}-footer`}
-        >
-          {isLast(key)
-            ? (
-            <div className='btn-group'>
-              {this.removeButton(key)}
-              {this.addButton}
-            </div>
-            )
-            : this.removeButton(key)
-          }
-        </div>
-      );
-    });
-
-    if (!result.length) {
-      result.push(
-        <div
-          className='panel-body'
-          key='body'
-        >
+    if (!items.length) {
+      items.push(
+        <div className='panel-body'>
           {`No ${this.title}`}
-        </div>
-      );
-      result.push(
-        <div
-          className='panel-footer'
-          key='footer'
-        >
-          {this.addButton}
         </div>
       );
     }
 
-    return result;
+    let rows = [];
+    for (let i = 0, j = items.length; i < j; i += columns) {
+      rows.push(
+        <div
+          className='row'
+          key={i}
+        >
+          {items.slice(i, i + columns).map((item, column) => (
+            <div
+              className={this.columnClass}
+              key={`${column}-column`}
+            >
+              {item}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    return rows.concat([(
+      <div
+        className='panel-footer'
+        key='footer'
+      >
+        {this.addButton}
+      </div>
+    )]);
   }
 
   get addButton() {
@@ -86,11 +84,11 @@ class BaseArrayEditor extends Editor {
   removeButton(key) {
     return (
       <button
-        className='btn'
+        className='close'
         onClick={this.createEditorRemover(key)}
         type="button"
       >
-        <i className='glyphicon glyphicon-minus'/>
+        <i className='glyphicon glyphicon-remove'/>
       </button>
     );
   }
@@ -144,6 +142,7 @@ class BaseArrayEditor extends Editor {
 
 BaseArrayEditor.propTypes = {
   ...Editor.propTypes,
+  columns: PropTypes.number,
   info: PropTypes.array,
   items: PropTypes.object.isRequired,
   uniqueItems: PropTypes.bool,
@@ -152,6 +151,7 @@ BaseArrayEditor.propTypes = {
 
 BaseArrayEditor.defaultProps = {
   ...Editor.defaultProps,
+  columns: 1,
   info: [],
   uniqueItems: false,
   value: []

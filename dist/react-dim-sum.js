@@ -3472,11 +3472,11 @@ var BaseArrayEditor = (function (_Editor) {
       return _react2['default'].createElement(
         'button',
         {
-          className: 'btn',
+          className: 'close',
           onClick: this.createEditorRemover(key),
           type: 'button'
         },
-        _react2['default'].createElement('i', { className: 'glyphicon glyphicon-minus' })
+        _react2['default'].createElement('i', { className: 'glyphicon glyphicon-remove' })
       );
     }
   }, {
@@ -3526,62 +3526,70 @@ var BaseArrayEditor = (function (_Editor) {
       };
     }
   }, {
+    key: 'columnClass',
+    get: function get() {
+      var size = 12 / this.props.columns;
+      return 'col-md-' + size;
+    }
+  }, {
     key: 'editors',
     get: function get() {
       var _this = this;
 
-      var value = this.props.value;
+      var _props = this.props;
+      var columns = _props.columns;
+      var value = _props.value;
 
       var isLast = function isLast(i) {
         return i === _this.props.value.length - 1;
       };
 
-      var result = [];
-
-      (value || []).forEach(function (val, key) {
-        result.push(_react2['default'].createElement(
+      var items = (value || []).map(function (val, key) {
+        return _react2['default'].createElement(
           'div',
-          {
-            className: 'panel-body',
-            key: key + '-editor'
-          },
+          { className: 'panel-body' },
+          _this.removeButton(key),
           _this.editor(key, val)
-        ));
-        result.push(_react2['default'].createElement(
-          'div',
-          {
-            className: 'panel-footer',
-            key: key + '-footer'
-          },
-          isLast(key) ? _react2['default'].createElement(
-            'div',
-            { className: 'btn-group' },
-            _this.removeButton(key),
-            _this.addButton
-          ) : _this.removeButton(key)
-        ));
+        );
       });
 
-      if (!result.length) {
-        result.push(_react2['default'].createElement(
+      if (!items.length) {
+        items.push(_react2['default'].createElement(
           'div',
-          {
-            className: 'panel-body',
-            key: 'body'
-          },
+          { className: 'panel-body' },
           'No ' + this.title
-        ));
-        result.push(_react2['default'].createElement(
-          'div',
-          {
-            className: 'panel-footer',
-            key: 'footer'
-          },
-          this.addButton
         ));
       }
 
-      return result;
+      var rows = [];
+      for (var i = 0, j = items.length; i < j; i += columns) {
+        rows.push(_react2['default'].createElement(
+          'div',
+          {
+            className: 'row',
+            key: i
+          },
+          items.slice(i, i + columns).map(function (item, column) {
+            return _react2['default'].createElement(
+              'div',
+              {
+                className: _this.columnClass,
+                key: column + '-column'
+              },
+              item
+            );
+          })
+        ));
+      }
+
+      return rows.concat([_react2['default'].createElement(
+        'div',
+        {
+          className: 'panel-footer',
+          key: 'footer'
+        },
+        this.addButton
+      )]);
     }
   }, {
     key: 'addButton',
@@ -3602,6 +3610,7 @@ var BaseArrayEditor = (function (_Editor) {
 })(_Editor3['default']);
 
 BaseArrayEditor.propTypes = _extends({}, _Editor3['default'].propTypes, {
+  columns: _react.PropTypes.number,
   info: _react.PropTypes.array,
   items: _react.PropTypes.object.isRequired,
   uniqueItems: _react.PropTypes.bool,
@@ -3609,6 +3618,7 @@ BaseArrayEditor.propTypes = _extends({}, _Editor3['default'].propTypes, {
 });
 
 BaseArrayEditor.defaultProps = _extends({}, _Editor3['default'].defaultProps, {
+  columns: 1,
   info: [],
   uniqueItems: false,
   value: []
