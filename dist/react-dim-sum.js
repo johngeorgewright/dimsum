@@ -3443,24 +3443,28 @@ var _Editor2 = require('../Editor');
 
 var _Editor3 = _interopRequireDefault(_Editor2);
 
-var ArrayEditor = (function (_Editor) {
-  _inherits(ArrayEditor, _Editor);
+var _classnames = require('classnames');
 
-  function ArrayEditor() {
-    _classCallCheck(this, ArrayEditor);
+var _classnames2 = _interopRequireDefault(_classnames);
+
+var BaseArrayEditor = (function (_Editor) {
+  _inherits(BaseArrayEditor, _Editor);
+
+  function BaseArrayEditor() {
+    _classCallCheck(this, BaseArrayEditor);
 
     for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
 
-    _get(Object.getPrototypeOf(ArrayEditor.prototype), 'constructor', this).apply(this, args);
+    _get(Object.getPrototypeOf(BaseArrayEditor.prototype), 'constructor', this).apply(this, args);
     this.addEditor = this.addEditor.bind(this);
   }
 
-  _createClass(ArrayEditor, [{
+  _createClass(BaseArrayEditor, [{
     key: 'addEditor',
     value: function addEditor() {
-      this.props.onChange([].concat(_toConsumableArray(this.props.value), [undefined]));
+      this.props.onChange([].concat(_toConsumableArray(this.props.value || []), [undefined]));
     }
   }, {
     key: 'removeButton',
@@ -3496,7 +3500,7 @@ var ArrayEditor = (function (_Editor) {
         info: this.props.info[key],
         level: this.props.level + 1,
         name: this.editorName(key),
-        title: '',
+        noTitle: true,
         onChange: this.createEditorUpdater(key),
         onInfo: this.createInfoUpdater(key),
         theme: this.props.theme,
@@ -3520,16 +3524,6 @@ var ArrayEditor = (function (_Editor) {
       return function (val) {
         return props.onInfo([].concat(_toConsumableArray(props.info.slice(0, key)), [val], _toConsumableArray(props.info.slice(key + 1))));
       };
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      return _react2['default'].createElement(
-        'div',
-        { className: 'panel panel-default' },
-        this.label,
-        this.editors
-      );
     }
   }, {
     key: 'editors',
@@ -3590,15 +3584,6 @@ var ArrayEditor = (function (_Editor) {
       return result;
     }
   }, {
-    key: 'label',
-    get: function get() {
-      return _react2['default'].createElement(
-        'div',
-        { className: 'panel-heading' },
-        this.title
-      );
-    }
-  }, {
     key: 'addButton',
     get: function get() {
       return _react2['default'].createElement(
@@ -3613,27 +3598,145 @@ var ArrayEditor = (function (_Editor) {
     }
   }]);
 
-  return ArrayEditor;
+  return BaseArrayEditor;
 })(_Editor3['default']);
 
-exports['default'] = ArrayEditor;
-
-ArrayEditor.propTypes = _extends({}, _Editor3['default'].propTypes, {
+BaseArrayEditor.propTypes = _extends({}, _Editor3['default'].propTypes, {
   info: _react.PropTypes.array,
   items: _react.PropTypes.object.isRequired,
   uniqueItems: _react.PropTypes.bool,
   value: _react.PropTypes.array
 });
 
-ArrayEditor.defaultProps = _extends({}, _Editor3['default'].defaultProps, {
+BaseArrayEditor.defaultProps = _extends({}, _Editor3['default'].defaultProps, {
   info: [],
   uniqueItems: false,
   value: []
 });
+
+var FieldsetArrayEditor = (function (_BaseArrayEditor) {
+  _inherits(FieldsetArrayEditor, _BaseArrayEditor);
+
+  function FieldsetArrayEditor(props) {
+    var _get2;
+
+    _classCallCheck(this, FieldsetArrayEditor);
+
+    for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      args[_key2 - 1] = arguments[_key2];
+    }
+
+    (_get2 = _get(Object.getPrototypeOf(FieldsetArrayEditor.prototype), 'constructor', this)).call.apply(_get2, [this, props].concat(args));
+    this.toggle = this.toggle.bind(this);
+    this.state = {
+      open: props.open
+    };
+  }
+
+  _createClass(FieldsetArrayEditor, [{
+    key: 'toggle',
+    value: function toggle() {
+      this.setState(_extends({}, this.state, {
+        open: !this.state.open
+      }));
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2['default'].createElement(
+        'fieldset',
+        null,
+        this.label,
+        this.editors
+      );
+    }
+  }, {
+    key: 'editors',
+    get: function get() {
+      return _react2['default'].createElement(
+        'div',
+        { className: (0, _classnames2['default'])('collapse panel panel-default', {
+            'in': this.state.open
+          }) },
+        _get(Object.getPrototypeOf(FieldsetArrayEditor.prototype), 'editors', this)
+      );
+    }
+  }, {
+    key: 'label',
+    get: function get() {
+      return _react2['default'].createElement(
+        'legend',
+        { onClick: this.toggle },
+        _react2['default'].createElement('span', {
+          className: 'caret',
+          style: { marginRight: '10px' }
+        }),
+        this.title
+      );
+    }
+  }]);
+
+  return FieldsetArrayEditor;
+})(BaseArrayEditor);
+
+var PanelArrayEditor = (function (_BaseArrayEditor2) {
+  _inherits(PanelArrayEditor, _BaseArrayEditor2);
+
+  function PanelArrayEditor() {
+    _classCallCheck(this, PanelArrayEditor);
+
+    _get(Object.getPrototypeOf(PanelArrayEditor.prototype), 'constructor', this).apply(this, arguments);
+  }
+
+  _createClass(PanelArrayEditor, [{
+    key: 'render',
+    value: function render() {
+      return _react2['default'].createElement(
+        'div',
+        { className: 'panel panel-default' },
+        this.label,
+        this.editors
+      );
+    }
+  }, {
+    key: 'label',
+    get: function get() {
+      return _react2['default'].createElement(
+        'div',
+        { className: 'panel-heading' },
+        this.title
+      );
+    }
+  }]);
+
+  return PanelArrayEditor;
+})(BaseArrayEditor);
+
+var ArrayEditor = (function (_BaseArrayEditor3) {
+  _inherits(ArrayEditor, _BaseArrayEditor3);
+
+  function ArrayEditor() {
+    _classCallCheck(this, ArrayEditor);
+
+    _get(Object.getPrototypeOf(ArrayEditor.prototype), 'constructor', this).apply(this, arguments);
+  }
+
+  _createClass(ArrayEditor, [{
+    key: 'render',
+    value: function render() {
+      var Behaviour = this.props.level === 2 ? FieldsetArrayEditor : PanelArrayEditor;
+      return _react2['default'].createElement(Behaviour, this.props);
+    }
+  }]);
+
+  return ArrayEditor;
+})(BaseArrayEditor);
+
+exports['default'] = ArrayEditor;
 module.exports = exports['default'];
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../Editor":9,"../EditorFactory":10}],13:[function(require,module,exports){
+},{"../Editor":9,"../EditorFactory":10,"classnames":undefined}],13:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4222,7 +4325,7 @@ var PanelObjectEditor = (function (_BaseObjectEditor3) {
   }, {
     key: 'label',
     get: function get() {
-      return _react2['default'].createElement(
+      return this.props.noTitle ? _react2['default'].createElement('span', null) : _react2['default'].createElement(
         'div',
         { className: 'panel-heading' },
         this.title

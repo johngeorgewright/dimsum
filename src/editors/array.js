@@ -1,8 +1,9 @@
 import React, {PropTypes} from 'react';
 import EditorFactory from '../EditorFactory';
 import Editor from '../Editor';
+import classNames from 'classnames';
 
-export default class ArrayEditor extends Editor {
+class BaseArrayEditor extends Editor {
   constructor(...args) {
     super(...args);
     this.addEditor = this.addEditor.bind(this);
@@ -34,7 +35,8 @@ export default class ArrayEditor extends Editor {
               {this.removeButton(key)}
               {this.addButton}
             </div>
-            ) : this.removeButton(key)
+            )
+            : this.removeButton(key)
           }
         </div>
       );
@@ -62,14 +64,6 @@ export default class ArrayEditor extends Editor {
     return result;
   }
 
-  get label() {
-    return (
-      <div className='panel-heading'>
-        {this.title}
-      </div>
-    );
-  }
-
   get addButton() {
     return (
       <button
@@ -84,7 +78,7 @@ export default class ArrayEditor extends Editor {
 
   addEditor() {
     this.props.onChange([
-      ...this.props.value,
+      ...(this.props.value || []),
       undefined
     ]);
   }
@@ -119,7 +113,7 @@ export default class ArrayEditor extends Editor {
         info={this.props.info[key]}
         level={this.props.level + 1}
         name={this.editorName(key)}
-        title=''
+        noTitle
         onChange={this.createEditorUpdater(key)}
         onInfo={this.createInfoUpdater(key)}
         theme={this.props.theme}
@@ -146,6 +140,79 @@ export default class ArrayEditor extends Editor {
       ...props.info.slice(key + 1)
     ]);
   }
+}
+
+BaseArrayEditor.propTypes = {
+  ...Editor.propTypes,
+  info: PropTypes.array,
+  items: PropTypes.object.isRequired,
+  uniqueItems: PropTypes.bool,
+  value: PropTypes.array
+};
+
+BaseArrayEditor.defaultProps = {
+  ...Editor.defaultProps,
+  info: [],
+  uniqueItems: false,
+  value: []
+};
+
+class FieldsetArrayEditor extends BaseArrayEditor {
+  constructor(props, ...args) {
+    super(props, ...args);
+    this.toggle = this.toggle.bind(this);
+    this.state = {
+      open: props.open
+    };
+  }
+
+  get editors() {
+    return (
+      <div className={classNames('collapse panel panel-default', {
+        in: this.state.open
+      })}>
+        {super.editors}
+      </div>
+    );
+  }
+
+  get label() {
+    return (
+      <legend onClick={this.toggle}>
+        <span
+          className='caret'
+          style={{marginRight: '10px'}}
+        />
+        {this.title}
+      </legend>
+    );
+  }
+
+  toggle() {
+    this.setState({
+      ...this.state,
+      open: !this.state.open
+    });
+  }
+
+  render() {
+    return (
+      <fieldset>
+        {this.label}
+        {this.editors}
+      </fieldset>
+    );
+  }
+}
+
+class PanelArrayEditor extends BaseArrayEditor {
+  get label() {
+    return (
+      <div className='panel-heading'>
+        {this.title}
+      </div>
+    );
+  }
 
   render() {
     return (
@@ -157,17 +224,11 @@ export default class ArrayEditor extends Editor {
   }
 }
 
-ArrayEditor.propTypes = {
-  ...Editor.propTypes,
-  info: PropTypes.array,
-  items: PropTypes.object.isRequired,
-  uniqueItems: PropTypes.bool,
-  value: PropTypes.array
-};
-
-ArrayEditor.defaultProps = {
-  ...Editor.defaultProps,
-  info: [],
-  uniqueItems: false,
-  value: []
-};
+export default class ArrayEditor extends BaseArrayEditor {
+  render() {
+    let Behaviour = this.props.level === 2
+      ? FieldsetArrayEditor
+      : PanelArrayEditor;
+    return <Behaviour {...this.props}/>;
+  }
+}

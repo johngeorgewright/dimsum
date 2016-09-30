@@ -147,11 +147,13 @@ FieldsetObjectEditor.defaultProps = {
 
 class PanelObjectEditor extends BaseObjectEditor {
   get label() {
-    return (
-      <div className='panel-heading'>
-        {this.title}
-      </div>
-    );
+    return this.props.noTitle
+      ? <span/>
+      : (
+        <div className='panel-heading'>
+          {this.title}
+        </div>
+      );
   }
 
   get editors() {
