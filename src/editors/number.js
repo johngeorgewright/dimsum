@@ -20,7 +20,7 @@ export default class NumberEditor extends Editor {
         onFocus={this.handleFocus}
         required={props.isRequired}
         type="number"
-        value={props.value}
+        value={props.value || ''}
       />
     );
   }

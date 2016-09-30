@@ -27,7 +27,7 @@ export default class Editor extends Component {
   }
 
   get usersThatAreFocused() {
-    const {focus = []} = this.props.info;
+    const focus = this.props.info.focus || [];
     const index = focus.indexOf(this.context.user.name);
     return [
       ...focus.slice(0, index),
@@ -87,8 +87,8 @@ Editor.propTypes = {
   }),
   isRequired: PropTypes.bool,
   name: (props, propName) => {
-    if (!/^[a-z0-9_]+$/i.test(props[propName])) {
-      return new Error('Invalid name');
+    if (!/^[a-z0-9_\-]+$/i.test(props[propName])) {
+      return new Error(`Invalid name "${props[propName]}"`);
     }
   },
   onChange: PropTypes.func.isRequired,

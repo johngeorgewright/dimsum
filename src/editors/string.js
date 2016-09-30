@@ -19,7 +19,7 @@ export default class StringEditor extends Editor {
         onFocus={this.handleFocus}
         required={props.isRequired}
         type="text"
-        value={props.value}
+        value={props.value || ''}
       />
     );
   }

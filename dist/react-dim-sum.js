@@ -3255,9 +3255,7 @@ var Editor = (function (_Component) {
   }, {
     key: 'usersThatAreFocused',
     get: function get() {
-      var _props$info$focus = this.props.info.focus;
-      var focus = _props$info$focus === undefined ? [] : _props$info$focus;
-
+      var focus = this.props.info.focus || [];
       var index = focus.indexOf(this.context.user.name);
       return [].concat(_toConsumableArray(focus.slice(0, index)), _toConsumableArray(focus.slice(index + 1)));
     }
@@ -3311,8 +3309,8 @@ Editor.propTypes = {
   }),
   isRequired: _react.PropTypes.bool,
   name: function name(props, propName) {
-    if (!/^[a-z0-9_]+$/i.test(props[propName])) {
-      return new Error('Invalid name');
+    if (!/^[a-z0-9_\-]+$/i.test(props[propName])) {
+      return new Error('Invalid name "' + props[propName] + '"');
     }
   },
   onChange: _react.PropTypes.func.isRequired,
@@ -3545,9 +3543,8 @@ var ArrayEditor = (function (_Editor) {
       };
 
       var result = [];
-      console.log('array value', value);
 
-      value.forEach(function (val, key) {
+      (value || []).forEach(function (val, key) {
         result.push(_react2['default'].createElement(
           'div',
           {
@@ -3963,7 +3960,7 @@ var NumberEditor = (function (_Editor) {
         onFocus: this.handleFocus,
         required: props.isRequired,
         type: 'number',
-        value: props.value
+        value: props.value || ''
       });
     }
   }]);
@@ -4343,7 +4340,7 @@ var StringEditor = (function (_Editor) {
         onFocus: this.handleFocus,
         required: props.isRequired,
         type: 'text',
-        value: props.value
+        value: props.value || ''
       });
     }
   }]);
