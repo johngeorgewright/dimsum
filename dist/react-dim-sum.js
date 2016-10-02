@@ -3529,7 +3529,7 @@ var BaseArrayEditor = (function (_Editor) {
     key: 'columnClass',
     get: function get() {
       var size = 12 / this.props.columns;
-      return 'col-md-' + size;
+      return 'col-sm-' + size;
     }
   }, {
     key: 'editors',
@@ -3539,10 +3539,6 @@ var BaseArrayEditor = (function (_Editor) {
       var _props = this.props;
       var columns = _props.columns;
       var value = _props.value;
-
-      var isLast = function isLast(i) {
-        return i === _this.props.value.length - 1;
-      };
 
       var items = (value || []).map(function (val, key) {
         return _react2['default'].createElement(
@@ -4310,7 +4306,7 @@ FieldsetObjectEditor.propTypes = _extends({}, BaseObjectEditor.propTypes, {
 });
 
 FieldsetObjectEditor.defaultProps = _extends({}, BaseObjectEditor.defaultProps, {
-  open: true
+  open: false
 });
 
 var PanelObjectEditor = (function (_BaseObjectEditor3) {

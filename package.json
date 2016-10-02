@@ -14,8 +14,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
-    "lodash.mergewith": "^4.6.0",
-    "react-mixin": "^2.0.2"
+    "lodash.mergewith": "^4.6.0"
   },
   "devDependencies": {
     "ajv": "^3.4.0",
