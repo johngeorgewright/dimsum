@@ -142,7 +142,7 @@ FieldsetObjectEditor.propTypes = {
 
 FieldsetObjectEditor.defaultProps = {
   ...BaseObjectEditor.defaultProps,
-  open: true
+  open: false
 };
 
 class PanelObjectEditor extends BaseObjectEditor {

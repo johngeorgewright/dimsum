@@ -11,12 +11,11 @@ class BaseArrayEditor extends Editor {
 
   get columnClass() {
     const size = 12 / this.props.columns;
-    return `col-md-${size}`;
+    return `col-sm-${size}`;
   }
 
   get editors() {
     const {props: {columns, value}} = this;
-    const isLast = i => i === (this.props.value.length - 1);
 
     let items = (value || []).map((val, key) => (
       <div className='panel-body'>
