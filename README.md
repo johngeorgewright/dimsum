@@ -1,5 +1,7 @@
 # Dim Sum
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/johngeorgewright/dimsum.svg)](https://greenkeeper.io/)
+
 __COMPONENT DESCRIPTION GOES HERE__
 
 
